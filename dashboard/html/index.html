@@ -1,0 +1,870 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+</head>
+<body>
+<title>Sales Intelligence Pulse</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,650;12..96,750&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: pine navigation rail on the left, a 12-column card grid on paper. Saffron = actual, track = plan, coral = needs attention. */
+:root{
+  --paper:#F0F2EC; --card:#FFFFFF; --tint:#E7EFE9; --track:#D6E4DA; --line:#E2E6DE;
+  --ink:#16201B; --ink2:#47524C; --muted:#737E78;
+  --pine:#1F4A3D; --pine2:#2E6A56; --sage:#7FA894; --sageL:#A9C7B8; --chip:#1F4A3D;
+  --slate:#5B7C99; --saffron:#EFB233; --saffronL:#FBEBC4; --coral:#E36F55; --coralL:#F9DDD5; --coral-ink:#B5442D; --good-ink:#2A6550;
+  --rail:#1F4A3D; --hero1:#2E6A56; --hero2:#1F4A3D; --on-hero:#FFFFFF; --tip-bg:#16201B; --tip-fg:#FFFFFF;
+  --shadow:0 14px 34px -22px rgba(23,58,47,.45), 0 2px 6px -4px rgba(23,58,47,.12);
+  --f-display:'Bricolage Grotesque','Segoe UI Variable Display','Segoe UI',system-ui,sans-serif;
+  --f-body:'Figtree','Segoe UI',system-ui,-apple-system,sans-serif;
+  --r-card:22px; --gap:20px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0D1613; --card:#14201C; --tint:#1A2A24; --track:#2A3F35; --line:#22332C;
+    --ink:#E6EDE8; --ink2:#B3C0B8; --muted:#87958D;
+    --pine:#4FA383; --pine2:#6CC09E; --sage:#6E9584; --sageL:#45675A; --chip:#2E6A56;
+    --slate:#8BA6C0; --saffron:#F0B93F; --saffronL:#3B3016; --coral:#EC7B62; --coralL:#3A211B; --coral-ink:#F39A85; --good-ink:#7DCBA9;
+    --rail:#11241E; --hero1:#24584A; --hero2:#143329; --on-hero:#FFFFFF; --tip-bg:#E6EDE8; --tip-fg:#0D1613;
+    --shadow:0 14px 34px -22px rgba(0,0,0,.8);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0D1613; --card:#14201C; --tint:#1A2A24; --track:#2A3F35; --line:#22332C;
+  --ink:#E6EDE8; --ink2:#B3C0B8; --muted:#87958D;
+  --pine:#4FA383; --pine2:#6CC09E; --sage:#6E9584; --sageL:#45675A; --chip:#2E6A56;
+  --slate:#8BA6C0; --saffron:#F0B93F; --saffronL:#3B3016; --coral:#EC7B62; --coralL:#3A211B; --coral-ink:#F39A85; --good-ink:#7DCBA9;
+  --rail:#11241E; --hero1:#24584A; --hero2:#143329; --on-hero:#FFFFFF; --tip-bg:#E6EDE8; --tip-fg:#0D1613;
+  --shadow:0 14px 34px -22px rgba(0,0,0,.8);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.45 var(--f-body);-webkit-font-smoothing:antialiased}
+button,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--saffron);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+
+/* ---------- shell ---------- */
+.app{display:grid;grid-template-columns:96px minmax(0,1fr);min-height:100%}
+.rail{position:sticky;top:0;height:100vh;height:100dvh;background:var(--rail);display:flex;flex-direction:column;align-items:center;padding-block:28px;gap:10px;z-index:5}
+.rail::after{content:"";position:absolute;top:28%;bottom:24%;right:-22px;width:24px;background:var(--rail);
+  border-radius:0 60px 60px 0/0 50% 50% 0;pointer-events:none}
+.logo{width:48px;height:48px;display:grid;place-items:center;margin-bottom:auto}
+.logo svg{width:48px;height:48px}
+.nav{display:flex;flex-direction:column;gap:14px;margin-bottom:auto;position:relative;z-index:1}
+.nav button{all:unset;cursor:pointer;width:64px;padding:10px 0 8px;border-radius:16px;display:grid;justify-items:center;gap:4px;color:rgba(255,255,255,.66);font-size:11px;font-weight:600;letter-spacing:.02em;transition:background .2s,color .2s}
+.nav button svg{width:22px;height:22px}
+.nav button:hover{color:#fff;background:rgba(255,255,255,.08)}
+.nav button[aria-current="page"]{background:var(--card);color:var(--ink);box-shadow:0 10px 22px -10px rgba(0,0,0,.45)}
+.nav button[aria-current="page"] svg{color:var(--pine)}
+.nav button:focus-visible{outline:2px solid var(--saffron)}
+.main{min-width:0;padding-block:26px 40px;padding-inline:clamp(16px,2.6vw,40px) clamp(16px,2.2vw,36px)}
+
+/* ---------- header ---------- */
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:18px 24px;margin-bottom:24px}
+.kicker{font-size:12px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--f-display);font-weight:750;font-size:clamp(28px,3.2vw,42px);line-height:1.05;letter-spacing:-.02em;margin:6px 0 0;text-wrap:balance}
+.filters{display:flex;flex-wrap:wrap;gap:12px}
+.fbox{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:7px 10px 7px 8px;display:flex;align-items:center;gap:10px;min-height:56px}
+.fbox .ic{width:32px;height:32px;border-radius:50%;background:var(--tint);display:grid;place-items:center;color:var(--pine);flex:none}
+.fbox .ic svg{width:17px;height:17px}
+.fbox label,.fbox .lbl{display:block;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.fbox select{border:0;background:transparent;font-weight:600;font-size:14px;padding:0 4px 0 0;cursor:pointer;min-width:120px}
+.seg{display:flex;gap:2px;background:var(--tint);border-radius:12px;padding:3px;margin-top:2px}
+.seg button{all:unset;cursor:pointer;font-size:13px;font-weight:600;padding:3px 10px;border-radius:9px;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--card);color:var(--ink);box-shadow:0 2px 6px -2px rgba(0,0,0,.18)}
+.seg button:focus-visible{outline:2px solid var(--saffron)}
+
+/* ---------- grid + cards ---------- */
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:var(--gap)}
+.c{grid-column:span var(--c,12);min-width:0}
+.card{background:var(--card);border-radius:var(--r-card);box-shadow:var(--shadow);padding:22px 24px 22px;display:flex;flex-direction:column;min-width:0}
+.ch{display:flex;align-items:center;gap:12px;margin-bottom:16px;min-height:40px}
+.chip{width:40px;height:40px;border-radius:50%;background:var(--chip);color:#fff;display:grid;place-items:center;flex:none}
+.chip svg{width:19px;height:19px}
+.ch h2{font-family:var(--f-display);font-weight:650;font-size:20px;letter-spacing:-.01em;margin:0;line-height:1.15}
+.ch .sub{font-size:12.5px;color:var(--muted);margin-top:1px}
+.ch .end{margin-left:auto;display:flex;align-items:center;gap:14px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--ink2)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:11px;height:11px;border-radius:4px;display:inline-block}
+.legend i.ln{height:3px;border-radius:2px;width:16px}
+.foot{font-size:12.5px;color:var(--muted);margin-top:auto;padding-top:12px}
+.empty{display:grid;place-items:center;text-align:center;color:var(--muted);font-size:14px;min-height:160px;border:1.5px dashed var(--line);border-radius:16px;padding:16px}
+
+/* hero */
+.hero{position:relative;padding-bottom:26px;display:flex;flex-direction:column}
+.hero .stack{position:absolute;inset:0 0 26px 0;border-radius:var(--r-card)}
+.hero .s2{background:var(--coralL);transform:translateY(24px) scaleX(.9)}
+.hero .s1{background:var(--saffron);transform:translateY(12px) scaleX(.95)}
+.hero .face{position:relative;border-radius:var(--r-card);background:linear-gradient(135deg,var(--hero1),var(--hero2));color:var(--on-hero);padding:26px 30px 24px;overflow:hidden;flex:1;box-shadow:0 22px 40px -24px rgba(10,35,27,.7)}
+.hero .contour{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.hero .row{position:relative;display:flex;justify-content:space-between;gap:16px;align-items:flex-start}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;opacity:.72}
+.big{font-family:var(--f-display);font-weight:750;font-size:clamp(44px,4.6vw,68px);line-height:1;letter-spacing:-.035em;margin-top:14px}
+.hero .meta{opacity:.75;font-size:14px;margin-top:8px}
+.ring{width:132px;height:132px;flex:none}
+.hero .split{position:relative;display:flex;gap:40px;margin-top:22px;padding-top:16px;border-top:1px dashed rgba(255,255,255,.2)}
+.hero .split .lbl{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;opacity:.6}
+.hero .split .v{font-family:var(--f-display);font-weight:650;font-size:24px;margin-top:4px}
+.hero .v.neg{color:#F6B3A3}
+
+/* kpi tiles */
+.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.tile{background:var(--tint);border-radius:var(--r-card);padding:24px 12px 20px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;min-width:0}
+.tile .chip{width:52px;height:52px}
+.tile .chip svg{width:22px;height:22px}
+.tile .v{font-family:var(--f-display);font-weight:750;font-size:clamp(24px,2.3vw,34px);letter-spacing:-.02em;margin-top:auto;line-height:1.1}
+.tile .l{font-weight:600;color:var(--ink2);font-size:14px;margin-top:auto}
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;font-weight:700;padding:4px 10px;border-radius:99px;white-space:nowrap}
+.pill.good{background:var(--tint);color:var(--good-ink)}
+.tile .pill.good{background:var(--card)}
+.pill.bad{background:var(--coralL);color:var(--coral-ink)}
+.pill.flat{background:var(--paper);color:var(--muted)}
+.htile{background:var(--tint);border-radius:var(--r-card);padding:20px 22px;display:flex;align-items:center;gap:16px;min-width:0}
+.htile .chip{width:52px;height:52px}
+.htile .v{font-family:var(--f-display);font-weight:750;font-size:32px;letter-spacing:-.02em;line-height:1.05}
+.htile .l{color:var(--ink2);font-weight:500;font-size:14px}
+.htile .side{margin-left:auto;text-align:right;font-size:12.5px;font-weight:600;color:var(--good-ink)}
+
+/* spark cards */
+.bigv{font-family:var(--f-display);font-weight:750;font-size:38px;letter-spacing:-.03em;line-height:1}
+.spark-foot{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-top:auto;padding-top:10px}
+
+/* bar lists */
+.hb{display:grid;gap:6px}
+.hb + .hb{margin-top:14px}
+.hb-top{display:flex;justify-content:space-between;gap:10px;font-size:14px}
+.hb-name{font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hb-name b{color:var(--muted);font-weight:700;margin-right:8px;font-size:12.5px}
+.hb-val{font-weight:700;white-space:nowrap}
+.hb-val small{color:var(--muted);font-weight:500;margin-right:8px;font-size:12.5px}
+.hb-track{height:10px;border-radius:6px;background:var(--track);overflow:hidden}
+.hb-fill{height:100%;border-radius:6px}
+.hb.thin .hb-track{height:6px}
+.hb.sel .hb-name{color:var(--good-ink)}
+
+/* lists + tables */
+.rows{display:flex;flex-direction:column}
+.r{display:grid;grid-template-columns:34px minmax(0,1.4fr) minmax(0,1.2fr) minmax(0,.9fr) auto auto;gap:12px;align-items:center;padding:9px 0;border-top:1px solid var(--line);font-size:14px}
+.r:first-child{border-top:0}
+.av{width:32px;height:32px;border-radius:50%;background:var(--tint);color:var(--pine);display:grid;place-items:center;font-size:11.5px;font-weight:700}
+.av.lead{background:var(--saffronL);color:var(--ink)}
+.r .nm{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.r .mt{color:var(--muted);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.r .rv{font-weight:700;text-align:right}
+.r .gm{font-size:12.5px;font-weight:700;text-align:right;min-width:56px}
+.good-t{color:var(--good-ink)} .bad-t{color:var(--coral-ink)}
+.tablewrap{overflow-x:auto;margin-inline:-8px;padding-inline:8px}
+table{border-collapse:separate;border-spacing:0;width:100%;font-size:14px}
+th{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700;text-align:left;padding:10px 12px;background:var(--paper);white-space:nowrap;position:sticky;top:0}
+th:first-child{border-radius:10px 0 0 10px} th:last-child{border-radius:0 10px 10px 0}
+th.n,td.n{text-align:right}
+th button{all:unset;cursor:pointer;display:inline-flex;gap:4px;align-items:center}
+th button:focus-visible{outline:2px solid var(--saffron)}
+th button[data-dir]::after{content:attr(data-dir);color:var(--ink)}
+td{padding:11px 12px;border-bottom:1px solid var(--line);white-space:nowrap;color:var(--ink2)}
+td.strong{color:var(--ink);font-weight:600}
+tr:last-child td{border-bottom:0}
+.scroll{max-height:440px;overflow:auto}
+.mini{display:inline-flex;align-items:center;gap:8px}
+.mini .bar{width:76px;height:8px;border-radius:4px;background:var(--track);overflow:hidden;display:inline-block}
+.mini .bar i{display:block;height:100%;border-radius:4px}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}
+.tag{display:inline-block;font-size:12px;font-weight:700;padding:3px 10px;border-radius:99px}
+
+/* segment */
+.stackbar{display:flex;gap:3px;height:56px;margin-bottom:6px}
+.stackbar div{border-radius:12px;display:flex;align-items:center;padding-left:14px;font-weight:700;font-size:15px;min-width:0;overflow:hidden;white-space:nowrap}
+
+/* journey */
+.journey{display:grid;grid-template-columns:minmax(220px,300px) minmax(0,1fr);gap:28px;align-items:stretch}
+.o2c{border-right:1px solid var(--line);padding-right:24px}
+.o2c .huge{font-family:var(--f-display);font-weight:750;font-size:clamp(56px,6vw,84px);line-height:.95;letter-spacing:-.04em}
+.o2c .huge small{font-size:22px;color:var(--muted);font-weight:500;letter-spacing:0;margin-left:6px}
+.stages{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;position:relative}
+.stage{display:grid;grid-template-columns:48px minmax(0,1fr);gap:4px 12px;align-items:center}
+.stage .chip{width:48px;height:48px;background:var(--tint);color:var(--pine);border:5px solid var(--card)}
+.stage .t{font-weight:700;font-size:15.5px}
+.stage .s{font-size:12.5px;color:var(--muted)}
+.stage .d{grid-column:2;font-family:var(--f-display);font-weight:750;font-size:36px;letter-spacing:-.02em;line-height:1;margin-top:10px}
+.stage .d small{font-size:16px;color:var(--muted);font-weight:500;margin-left:3px}
+.stage .p{grid-column:2;font-size:12.5px;color:var(--muted)}
+.cycle{display:flex;gap:3px;height:30px;margin-top:22px}
+.cycle div{border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;min-width:0;overflow:hidden}
+.cycle div:first-child{border-radius:15px 6px 6px 15px}
+.cycle div:last-child{border-radius:6px 15px 15px 6px}
+
+/* note */
+.note{display:grid;grid-template-columns:minmax(0,1fr) 150px;gap:12px;align-items:center}
+.note p{margin:0;color:var(--ink2);font-size:15px;max-width:40ch}
+.note p b{color:var(--ink)}
+.note .cta{font-weight:700;color:var(--good-ink);margin-top:12px;font-size:14px}
+.callout{background:var(--coralL);color:var(--coral-ink);border-radius:14px;padding:12px 16px;font-weight:600;font-size:14px;margin-top:16px}
+
+/* svg charts */
+.chart{width:100%;position:relative}
+.chart svg{display:block;overflow:visible}
+.chart text{font-family:var(--f-body)}
+.hc .x{opacity:0;transition:opacity .12s}
+.hc:hover .x{opacity:1}
+.tip{position:fixed;z-index:50;pointer-events:none;background:var(--tip-bg);color:var(--tip-fg);font-size:12.5px;line-height:1.4;padding:8px 11px;border-radius:10px;max-width:260px;box-shadow:0 10px 24px -10px rgba(0,0,0,.5);opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s}
+.tip.on{opacity:1;transform:none}
+.tip b{font-weight:700}
+
+/* responsive */
+@media (max-width:1320px){
+  .c{grid-column:span var(--cm,12)}
+}
+@media (max-width:860px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  .rail{position:sticky;top:0;height:auto;flex-direction:row;padding:10px 16px;padding-top:calc(10px + env(safe-area-inset-top,0px));gap:12px}
+  .rail::after{display:none}
+  .logo{margin:0;width:40px;height:40px}.logo svg{width:40px;height:40px}
+  .nav{flex-direction:row;margin:0 0 0 auto;gap:6px}
+  .nav button{width:auto;padding:8px 12px;grid-auto-flow:column;gap:6px}
+  .c{grid-column:1/-1}
+  .journey{grid-template-columns:minmax(0,1fr)}
+  .o2c{border-right:0;border-bottom:1px solid var(--line);padding:0 0 18px}
+  .stages{grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 16px}
+  .r{grid-template-columns:34px minmax(0,1fr) auto auto}
+  .r .hide-sm{display:none}
+}
+@media (max-width:520px){
+  .nav button span{display:none}
+  .fbox{flex:1 1 100%}
+  .fbox select{width:100%}
+  .kpis{gap:8px}
+  .tile{padding:16px 6px}
+  .tile .chip{width:40px;height:40px}
+  .note{grid-template-columns:minmax(0,1fr)}
+  .note .art{display:none}
+  .hero .face{padding:22px}
+  .ring{width:96px;height:96px}
+  .hero .split{gap:24px}
+  .stages{grid-template-columns:minmax(0,1fr)}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-grid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="6.5" height="6.5" rx="1.8"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.8"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.8"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="3.2"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M17 14.5c2.4.2 4 1.8 4.6 4.5"/></symbol>
+    <symbol id="i-truck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h11v10H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="18" r="1.8"/><circle cx="17.5" cy="18" r="1.8"/></symbol>
+    <symbol id="i-coin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M14.5 9.5c-.5-1-1.5-1.5-2.5-1.5-1.4 0-2.5.8-2.5 2s1 1.7 2.5 2 2.5.8 2.5 2-1.1 2-2.5 2c-1 0-2-.5-2.5-1.5M12 6.5V8M12 16v1.5"/></symbol>
+    <symbol id="i-percent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 18L18 6"/><circle cx="7.5" cy="7.5" r="2.2"/><circle cx="16.5" cy="16.5" r="2.2"/></symbol>
+    <symbol id="i-box" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M4 8l8-4 8 4v8l-8 4-8-4zM4 8l8 4 8-4M12 12v8"/></symbol>
+    <symbol id="i-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M3.5 12V3.5H12l8.5 8.5-8.5 8.5z"/><circle cx="8" cy="8" r="1.5"/></symbol>
+    <symbol id="i-trend" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></symbol>
+    <symbol id="i-cart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h3l2.5 11h10L21 7H7"/><circle cx="10" cy="19.5" r="1.3"/><circle cx="17" cy="19.5" r="1.3"/></symbol>
+    <symbol id="i-bars" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M5 20V11M10 20V4M15 20v-8M20 20v-5"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5zM3 13l9 5 9-5"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></symbol>
+    <symbol id="i-pie" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M11 4a8 8 0 1 0 9 9h-9z"/><path d="M14 2.5a8 8 0 0 1 7.5 7.5H14z"/></symbol>
+    <symbol id="i-person" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="7.5" r="3.5"/><path d="M5 21c.6-4 3.4-6.5 7-6.5s6.4 2.5 7 6.5"/></symbol>
+    <symbol id="i-table" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3.5" y="5" width="17" height="14" rx="2"/><path d="M3.5 10h17M10 10v9"/></symbol>
+    <symbol id="i-mega" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"><path d="M3 10v4h4l7 4V6L7 10zM17.5 9c1.5 1 1.5 5 0 6"/></symbol>
+    <symbol id="i-house" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M3 10l9-6 9 6v10H3zM8 20v-6h8v6"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 21s-7-6.1-7-11a7 7 0 0 1 14 0c0 4.9-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+    <symbol id="i-doc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"><path d="M6 3h9l4 4v14H6zM9 12h7M9 16h5"/></symbol>
+    <symbol id="i-cal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><rect x="4" y="5" width="16" height="15" rx="2.5"/><path d="M4 10h16M9 3v4M15 3v4"/></symbol>
+    <symbol id="i-filter" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M4 5h16l-6 7.5V19l-4-2v-4.5z"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M6 18l2.5-2.5M15.5 8.5L18 6"/></symbol>
+  </defs>
+</svg>
+
+<div class="app">
+  <nav class="rail" aria-label="Dashboard pages">
+    <div class="logo" aria-hidden="true">
+      <svg viewBox="0 0 48 48"><rect x="10" y="10" width="28" height="28" rx="8" transform="rotate(45 24 24)" style="fill:var(--saffron)"/><path d="M17 31v-5M24 31V16M31 31v-9" style="stroke:#1F4A3D" stroke-width="3.4" stroke-linecap="round"/></svg>
+    </div>
+    <div class="nav">
+      <button type="button" data-view="overview"><svg><use href="#i-grid"/></svg><span>Overview</span></button>
+      <button type="button" data-view="accounts"><svg><use href="#i-users"/></svg><span>Accounts</span></button>
+      <button type="button" data-view="operations"><svg><use href="#i-truck"/></svg><span>Operations</span></button>
+    </div>
+  </nav>
+
+  <main class="main">
+    <header class="top">
+      <div>
+        <div class="kicker" id="kicker">Sales Intelligence · Overview</div>
+        <h1 id="title">Revenue Pulse</h1>
+      </div>
+      <div class="filters" role="group" aria-label="Filters">
+        <div class="fbox">
+          <span class="ic"><svg><use href="#i-cal"/></svg></span>
+          <div><span class="lbl" id="period-lbl">Period</span>
+            <div class="seg" role="group" aria-labelledby="period-lbl" id="period">
+              <button type="button" data-p="all">All</button><button type="button" data-p="2025">2025</button><button type="button" data-p="2026">2026</button>
+            </div>
+          </div>
+        </div>
+        <div class="fbox"><span class="ic"><svg><use href="#i-globe"/></svg></span>
+          <div><label for="region">Region</label><select id="region"></select></div></div>
+        <div class="fbox"><span class="ic"><svg><use href="#i-filter"/></svg></span>
+          <div><label for="segment">Segment</label><select id="segment"></select></div></div>
+      </div>
+    </header>
+
+    <!-- ================= OVERVIEW ================= -->
+    <section id="v-overview" class="grid" aria-label="Overview">
+      <div class="c hero" style="--c:4;--cm:12">
+        <div class="stack s2"></div><div class="stack s1"></div>
+        <div class="face">
+          <svg class="contour" id="contour" viewBox="0 0 600 320" preserveAspectRatio="none" aria-hidden="true"></svg>
+          <div class="row">
+            <div style="min-width:0">
+              <div class="eyebrow">Net revenue</div>
+              <div class="big num" id="h-rev">–</div>
+              <div class="meta" id="h-meta"></div>
+            </div>
+            <svg class="ring" id="h-ring" viewBox="0 0 132 132" role="img"></svg>
+          </div>
+          <div class="split">
+            <div><div class="lbl" id="h-l1">Target</div><div class="v num" id="h-v1">–</div></div>
+            <div><div class="lbl" id="h-l2">Gap to target</div><div class="v num" id="h-v2">–</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="c kpis" style="--c:4;--cm:6">
+        <div class="tile"><span class="chip"><svg><use href="#i-percent"/></svg></span><div class="v num" id="k-gm">–</div><span id="k-gm-d"></span><div class="l">Gross margin</div></div>
+        <div class="tile"><span class="chip"><svg><use href="#i-box"/></svg></span><div class="v num" id="k-or">–</div><span id="k-or-d"></span><div class="l">Orders</div></div>
+        <div class="tile"><span class="chip"><svg><use href="#i-tag"/></svg></span><div class="v num" id="k-aov">–</div><span id="k-aov-d"></span><div class="l">Avg order value</div></div>
+      </div>
+
+      <div class="c card" style="--c:4;--cm:6">
+        <div class="ch"><h2>Margin pulse</h2>
+          <div class="end"><div class="seg" role="group" aria-label="Margin grain" id="grain"><button type="button" data-g="month">Month</button><button type="button" data-g="quarter">Quarter</button></div></div></div>
+        <div class="chart" id="ch-margin"></div>
+      </div>
+
+      <div class="c card" style="--c:3;--cm:6">
+        <div class="ch"><span class="chip"><svg><use href="#i-trend"/></svg></span><h2>Gross profit</h2></div>
+        <div class="chart" id="ch-gp"></div>
+        <div class="spark-foot"><div class="bigv num" id="gp-v">–</div><span id="gp-d"></span></div>
+      </div>
+      <div class="c card" style="--c:3;--cm:6">
+        <div class="ch"><span class="chip"><svg><use href="#i-cart"/></svg></span><h2>Cost of goods</h2></div>
+        <div class="chart" id="ch-cogs"></div>
+        <div class="spark-foot"><div class="bigv num" id="cogs-v">–</div><span id="cogs-d"></span></div>
+      </div>
+      <div class="c card" style="--c:6;--cm:12">
+        <div class="ch"><span class="chip"><svg><use href="#i-bars"/></svg></span><div><h2>Revenue vs target</h2><div class="sub" id="bars-sub">Monthly, saffron is actual, the track behind it is the plan</div></div>
+          <div class="end legend" id="bars-legend"><span><i style="background:var(--saffron)"></i>Actual</span><span><i style="background:var(--track)"></i>Target</span></div></div>
+        <div class="chart" id="ch-bars"></div>
+      </div>
+
+      <div class="c card" style="--c:3;--cm:6">
+        <div class="ch"><span class="chip"><svg><use href="#i-layers"/></svg></span><h2>Category mix</h2></div>
+        <div id="cat"></div>
+      </div>
+      <div class="c card" style="--c:5;--cm:12">
+        <div class="ch"><span class="chip"><svg><use href="#i-users"/></svg></span><h2>Top accounts</h2><div class="end sub" id="top-sub"></div></div>
+        <div class="rows" id="top"></div>
+      </div>
+      <div class="c card" style="--c:4;--cm:6">
+        <div class="ch"><span class="chip" style="background:var(--saffron);color:#16201B"><svg><use href="#i-spark"/></svg></span><h2>Analyst note</h2></div>
+        <div class="note">
+          <div><p id="note"></p><div class="cta" id="note-cta"></div></div>
+          <svg class="art" viewBox="0 0 180 170" aria-hidden="true">
+            <polygon points="168,85 147,100 157,124 131,124 124,150 104,138 85,160 66,138 46,150 39,124 13,124 23,100 2,85 23,70 13,46 39,46 46,20 66,32 85,10 104,32 124,20 131,46 157,46 147,70" style="fill:var(--coralL)"/>
+            <rect x="22" y="44" width="122" height="88" rx="13" style="fill:var(--card);stroke:var(--ink)" stroke-width="2.4"/>
+            <path d="M22 62h122" style="stroke:var(--ink)" stroke-width="2.4"/>
+            <circle cx="34" cy="53" r="2.8" style="fill:var(--coral)"/><circle cx="43" cy="53" r="2.8" style="fill:var(--saffron)"/>
+            <rect x="38" y="104" width="13" height="18" rx="3" style="fill:var(--sageL)"/><rect x="58" y="92" width="13" height="30" rx="3" style="fill:var(--sageL)"/><rect x="78" y="100" width="13" height="22" rx="3" style="fill:var(--sageL)"/><rect x="98" y="80" width="13" height="42" rx="3" style="fill:var(--saffron)"/>
+            <circle cx="132" cy="96" r="22" style="fill:var(--card);fill-opacity:.55;stroke:var(--ink)" stroke-width="2.8"/>
+            <path d="M148 112l18 18" style="stroke:var(--ink)" stroke-width="5.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= ACCOUNTS ================= -->
+    <section id="v-accounts" class="grid" aria-label="Accounts" hidden>
+      <div class="c htile" style="--c:4;--cm:4"><span class="chip"><svg><use href="#i-users"/></svg></span><div><div class="v num" id="a-active">–</div><div class="l">Active customers</div></div><div class="side" id="a-active-s"></div></div>
+      <div class="c htile" style="--c:4;--cm:4"><span class="chip"><svg><use href="#i-coin"/></svg></span><div><div class="v num" id="a-rpc">–</div><div class="l">Revenue per customer</div></div></div>
+      <div class="c htile" style="--c:4;--cm:4"><span class="chip"><svg><use href="#i-layers"/></svg></span><div><div class="v num" id="a-top10">–</div><div class="l">Top-10 share of revenue</div></div></div>
+
+      <div class="c card" style="--c:5;--cm:6">
+        <div class="ch"><span class="chip"><svg><use href="#i-globe"/></svg></span><div><h2>Region leaderboard</h2><div class="sub">Ignores the region filter so you can compare</div></div></div>
+        <div id="regions"></div>
+        <div class="foot" id="regions-foot"></div>
+      </div>
+      <div class="c card" style="--c:7;--cm:6">
+        <div class="ch"><span class="chip"><svg><use href="#i-bars"/></svg></span><div><h2>Revenue concentration</h2><div class="sub">Cumulative share of revenue, accounts ranked by revenue</div></div>
+          <div class="end legend"><span><i class="ln" style="background:var(--saffron)"></i>Top 10</span><span><i class="ln" style="background:var(--pine)"></i>Other accounts</span></div></div>
+        <div class="chart" id="ch-curve"></div>
+      </div>
+
+      <div class="c card" style="--c:5;--cm:6">
+        <div class="ch"><span class="chip"><svg><use href="#i-pie"/></svg></span><div><h2>Segment mix</h2><div class="sub">Ignores the segment filter so you can compare</div></div></div>
+        <div class="stackbar" id="segbar"></div>
+        <div class="tablewrap"><table id="segtable"></table></div>
+      </div>
+      <div class="c card" style="--c:7;--cm:6">
+        <div class="ch"><span class="chip"><svg><use href="#i-person"/></svg></span><h2>Account managers</h2></div>
+        <div id="mgrs"></div>
+      </div>
+
+      <div class="c card" style="--c:12">
+        <div class="ch"><span class="chip"><svg><use href="#i-table"/></svg></span><div><h2>Account book</h2><div class="sub">Click a column to sort. Credit used = revenue in period ÷ credit limit.</div></div><div class="end sub" id="book-sub"></div></div>
+        <div class="tablewrap scroll"><table id="book"></table></div>
+      </div>
+    </section>
+
+    <!-- ================= OPERATIONS ================= -->
+    <section id="v-operations" class="grid" aria-label="Operations" hidden>
+      <div class="c card" style="--c:12">
+        <div class="ch"><span class="chip"><svg><use href="#i-clock"/></svg></span><div><h2>Order-to-cash journey</h2><div class="sub">Average days spent in each stage, orders placed in the selected period</div></div></div>
+        <div class="journey">
+          <div class="o2c">
+            <div class="kicker">Order → cash</div>
+            <div class="huge num" id="o-total">–<small>days</small></div>
+            <div class="foot" style="margin-top:8px;padding-top:0">Average days from order to payment</div>
+            <div class="bad-t" style="font-weight:700;font-size:13px;margin-top:6px" id="o-open"></div>
+          </div>
+          <div>
+            <div class="stages" id="stages"></div>
+            <div class="cycle" id="cycle" role="img"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="c card" style="--c:7;--cm:12">
+        <div class="ch"><span class="chip"><svg><use href="#i-mega"/></svg></span><div><h2>Campaign ledger</h2><div class="sub" id="camp-sub">Campaigns starting in the selected period. Not split by region or segment.</div></div></div>
+        <div class="tablewrap"><table id="camp"></table></div>
+        <div id="camp-call"></div>
+      </div>
+      <div class="c" style="--c:5;--cm:12;display:grid;gap:var(--gap)">
+        <div class="card">
+          <div class="ch"><span class="chip"><svg><use href="#i-house"/></svg></span><div><h2>Inventory on hand</h2><div class="sub">Units across all products, monthly snapshot</div></div></div>
+          <div class="chart" id="ch-inv"></div>
+        </div>
+        <div class="card">
+          <div class="ch"><span class="chip"><svg><use href="#i-cal"/></svg></span><div><h2>Payment terms vs reality</h2><div class="sub">Days from invoice to payment</div></div>
+            <div class="end legend"><span><i style="background:var(--sageL)"></i>Promised</span><span><i style="background:var(--coral)"></i>Actual</span></div></div>
+          <div id="terms"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+<div class="tip" id="tip" role="tooltip"></div>
+
+<script>
+const D = {"customers":{"1001":["Meridian Group","Mid-Market","Latin America","Sarah Lin","Net 30",10000],"1002":["Cascade Industries","Enterprise","Europe","Tom Reyes","Net 60",10000],"1003":["Nova Retail","Mid-Market","Asia Pacific","Mei Chen","Net 15",250000],"1004":["Catalyst Industries","Mid-Market","Asia Pacific","David Park","Prepaid",25000],"1005":["Cascade Commerce","Mid-Market","Europe","Omar Khan","Net 30",50000],"1006":["Quantum Logistics","SMB","Middle East","Sarah Lin","Net 60",100000],"1007":["Vanguard Holdings","Mid-Market","North America","Tom Reyes","Net 15",10000],"1008":["Catalyst Distribution","SMB","Latin America","Mei Chen","Prepaid",10000],"1009":["Keystone Distribution","SMB","Europe","David Park","Net 30",50000],"1010":["Vertex Distribution","Enterprise","Latin America","Omar Khan","Net 60",50000],"1011":["Atlas Industries","Enterprise","North America","Sarah Lin","Net 15",10000],"1012":["Apex Commerce","Enterprise","Asia Pacific","Tom Reyes","Prepaid",250000],"1013":["Fusion Logistics","Mid-Market","Asia Pacific","Mei Chen","Net 30",10000],"1014":["Pinnacle Distribution","SMB","Asia Pacific","David Park","Net 60",50000],"1015":["Meridian Commerce","SMB","Middle East","Omar Khan","Net 15",25000],"1016":["Summit Commerce","Enterprise","Middle East","Sarah Lin","Prepaid",50000],"1017":["Cascade Group","Mid-Market","Latin America","Tom Reyes","Net 30",10000],"1018":["Zenith Logistics","SMB","Europe","Mei Chen","Net 60",100000],"1019":["Zenith Distribution","SMB","Europe","David Park","Net 15",100000],"1020":["Cascade Partners","Mid-Market","Middle East","Omar Khan","Prepaid",25000],"1021":["Momentum Holdings","Mid-Market","Europe","Sarah Lin","Net 30",100000],"1022":["Meridian Retail","SMB","Latin America","Tom Reyes","Net 60",250000],"1023":["Keystone Logistics","SMB","Middle East","Mei Chen","Net 15",100000],"1024":["Vertex Logistics","Enterprise","Middle East","David Park","Prepaid",10000],"1025":["Pinnacle Trading","SMB","Europe","Omar Khan","Net 30",10000],"1026":["Zenith Holdings","SMB","Asia Pacific","Sarah Lin","Net 60",100000],"1027":["Nova Partners","Mid-Market","North America","Tom Reyes","Net 15",25000],"1028":["Summit Partners","SMB","Europe","Mei Chen","Prepaid",10000],"1029":["Vertex Supply","Enterprise","North America","David Park","Net 30",50000],"1030":["Pinnacle Commerce","SMB","Europe","Omar Khan","Net 60",25000],"1031":["Apex Trading","SMB","North America","Sarah Lin","Net 15",25000],"1032":["Atlas Group","Mid-Market","Middle East","Tom Reyes","Prepaid",50000],"1033":["Meridian Supply","Enterprise","Latin America","Mei Chen","Net 30",10000],"1034":["Momentum Group","Mid-Market","Europe","David Park","Net 60",100000],"1035":["Evergreen Partners","Mid-Market","Europe","Omar Khan","Net 15",250000],"1036":["Vanguard Logistics","SMB","North America","Sarah Lin","Prepaid",100000],"1037":["Keystone Commerce","Mid-Market","Asia Pacific","Tom Reyes","Net 30",25000],"1038":["Summit Retail","Mid-Market","Middle East","Mei Chen","Net 60",25000],"1039":["Zenith Group","SMB","North America","David Park","Net 15",50000],"1040":["Beacon Group","Mid-Market","Middle East","Omar Khan","Prepaid",25000],"1041":["Apex Holdings","SMB","North America","Sarah Lin","Net 30",50000],"1042":["Fusion Group","Mid-Market","Middle East","Tom Reyes","Net 60",10000],"1043":["Catalyst Partners","SMB","Middle East","Mei Chen","Net 15",100000],"1044":["Horizon Supply","SMB","Europe","David Park","Prepaid",10000],"1045":["Evergreen Supply","Mid-Market","Asia Pacific","Omar Khan","Net 30",10000],"1046":["Meridian Partners","SMB","Asia Pacific","Sarah Lin","Net 60",50000],"1047":["Fusion Distribution","SMB","Latin America","Tom Reyes","Net 15",50000],"1048":["Orbit Holdings","Mid-Market","Middle East","Mei Chen","Prepaid",100000],"1049":["Apex Group","Mid-Market","North America","David Park","Net 30",50000],"1050":["Evergreen Group","Enterprise","Europe","Omar Khan","Net 60",100000],"1051":["Evergreen Distribution","Mid-Market","North America","Sarah Lin","Net 15",10000],"1052":["Quantum Distribution","Mid-Market","Europe","Tom Reyes","Prepaid",10000],"1053":["Summit Group","Enterprise","Europe","Mei Chen","Net 30",100000],"1054":["Horizon Logistics","Enterprise","Latin America","David Park","Net 60",25000],"1055":["Pioneer Partners","Enterprise","Latin America","Omar Khan","Net 15",250000],"1056":["Atlas Holdings","Enterprise","Europe","Sarah Lin","Prepaid",50000],"1057":["Keystone Partners","Enterprise","Asia Pacific","Tom Reyes","Net 30",250000],"1058":["Pioneer Holdings","Enterprise","North America","Mei Chen","Net 60",10000],"1059":["Quantum Supply","Mid-Market","Europe","David Park","Net 15",10000],"1060":["Cascade Retail","Mid-Market","Middle East","Omar Khan","Prepaid",100000]},"lines":[["2026-09-12","ORD00001",1052,"Apparel",9,377.6,6178.86],["2026-06-13","ORD00002",1046,"Electronics",3,506.72,2576.55],["2026-03-24","ORD00003",1054,"Apparel",7,142.96,1588.44],["2026-02-10","ORD00004",1004,"Electronics",8,380.82,4547.12],["2025-04-12","ORD00005",1021,"Apparel",6,487.44,4119.24],["2026-04-29","ORD00006",1059,"Home",7,46.59,592.9],["2025-03-23","ORD00007",1058,"Industrial",9,378.45,5772.96],["2025-11-05","ORD00008",1016,"Apparel",7,518.57,5761.91],["2026-07-03","ORD00009",1039,"Sports",3,458.19,2051.61],["2025-12-28","ORD00010",1040,"Electronics",7,516.5,5092.29],["2026-07-12","ORD00011",1034,"Beauty",9,487.81,7982.28],["2026-01-18","ORD00012",1025,"Beauty",4,364.06,2468.2],["2026-10-06","ORD00013",1043,"Electronics",4,144.93,920.2],["2025-12-13","ORD00014",1035,"Electronics",3,487.4,2182.41],["2026-04-14","ORD00015",1005,"Industrial",8,30.39,342.4],["2026-02-12","ORD00016",1033,"Apparel",1,362.71,659.47],["2025-12-06","ORD00017",1056,"Electronics",7,335.35,3978.73],["2026-05-24","ORD00018",1012,"Sports",9,430.84,6154.83],["2025-03-26","ORD00019",1052,"Industrial",3,438.21,1962.15],["2025-03-23","ORD00020",1007,"Home",4,279.85,1576.64],["2025-02-13","ORD00021",1029,"Industrial",4,233.26,1696.4],["2026-10-15","ORD00022",1043,"Apparel",2,119.87,406.34],["2026-09-15","ORD00023",1055,"Home",8,116.27,1476.48],["2026-08-04","ORD00024",1025,"Electronics",6,154.13,1380.3],["2025-05-21","ORD00025",1037,"Home",9,74.88,949.14],["2025-07-10","ORD00026",1048,"Sports",4,355.28,2583.84],["2026-04-02","ORD00027",1046,"Apparel",5,405.06,3432.7],["2025-03-17","ORD00028",1055,"Home",10,248.32,3941.6],["2026-07-18","ORD00029",1005,"Apparel",1,365.2,545.07],["2025-05-05","ORD00030",1015,"Electronics",2,69.92,196.96],["2026-01-13","ORD00031",1037,"Beauty",10,193.28,3514.1],["2026-05-06","ORD00032",1046,"Sports",9,381.12,5813.64],["2026-04-06","ORD00033",1005,"Beauty",8,100.14,1271.6],["2025-02-26","ORD00034",1059,"Beauty",6,106.5,953.7],["2025-10-18","ORD00035",1034,"Electronics",1,516.5,727.47],["2025-04-06","ORD00036",1035,"Beauty",4,87.42,635.8],["2026-09-12","ORD00037",1058,"Beauty",2,203.83,690.96],["2026-08-14","ORD00038",1050,"Beauty",8,217.65,2763.84],["2026-10-05","ORD00039",1057,"Apparel",4,441.84,2637.88],["2026-02-20","ORD00040",1016,"Sports",10,342.21,4819.9],["2025-07-28","ORD00041",1030,"Sports",4,460.4,3348.36],["2026-01-15","ORD00042",1049,"Home",4,529.6,3590.52],["2025-05-25","ORD00043",1016,"Electronics",6,358.09,3410.34],["2025-06-13","ORD00044",1016,"Beauty",5,338.5,2526.1],["2026-05-26","ORD00045",1030,"Home",8,279.85,3153.28],["2026-08-21","ORD00046",1014,"Industrial",6,379.14,4136.04],["2025-04-21","ORD00047",1055,"Electronics",5,429.21,3637.35],["2025-02-22","ORD00048",1026,"Home",9,424.82,6068.88],["2026-07-18","ORD00049",1029,"Apparel",8,253.82,3030.64],["2025-12-14","ORD00050",1024,"Beauty",2,168.63,475.0],["2025-05-21","ORD00051",1003,"Industrial",8,23.54,342.4],["2025-12-02","ORD00052",1009,"Beauty",6,138.3,1406.4],["2026-06-06","ORD00053",1054,"Apparel",4,415.47,2637.88],["2025-04-23","ORD00054",1044,"Home",6,451.79,4045.92],["2026-08-16","ORD00055",1017,"Sports",1,485.55,683.87],["2026-09-27","ORD00056",1047,"Electronics",4,105.07,764.16],["2025-07-15","ORD00057",1008,"Beauty",3,203.83,1036.44],["2026-09-19","ORD00058",1050,"Electronics",5,408.67,3243.4],["2025-11-29","ORD00059",1036,"Electronics",10,380.82,5683.9],["2025-12-29","ORD00060",1035,"Electronics",7,609.78,6011.95],["2025-10-13","ORD00061",1016,"Electronics",3,382.23,2084.88],["2025-10-23","ORD00062",1050,"Beauty",6,207.33,2108.46],["2025-10-08","ORD00063",1060,"Industrial",7,400.75,4452.77],["2025-02-13","ORD00064",1019,"Electronics",4,128.0,764.16],["2026-07-06","ORD00065",1013,"Beauty",9,482.47,6115.77],["2025-09-03","ORD00066",1038,"Home",6,46.59,508.2],["2026-02-28","ORD00067",1007,"Industrial",8,250.22,3392.8],["2026-10-31","ORD00068",1027,"Sports",8,406.95,5167.68],["2025-04-02","ORD00069",1004,"Beauty",3,159.12,712.5],["2025-02-07","ORD00070",1060,"Sports",6,458.63,3875.76],["2026-09-10","ORD00071",1037,"Sports",3,42.11,229.68],["2025-07-17","ORD00072",1018,"Sports",9,381.12,5813.64],["2025-12-12","ORD00073",1048,"Beauty",3,428.1,2038.59],["2026-02-20","ORD00074",1058,"Apparel",9,441.84,5935.23],["2025-09-12","ORD00075",1021,"Home",1,60.14,84.7],["2026-08-10","ORD00076",1047,"Industrial",1,359.73,654.05],["2025-06-13","ORD00077",1020,"Electronics",2,386.55,1310.34],["2025-05-01","ORD00078",1045,"Industrial",1,164.71,261.45],["2026-04-11","ORD00079",1010,"Beauty",1,157.05,234.4],["2026-09-03","ORD00080",1044,"Sports",3,485.55,2051.61],["2025-11-05","ORD00008",1016,"Electronics",4,360.34,2620.68],["2026-09-10","ORD00071",1037,"Apparel",3,153.94,782.76],["2026-07-06","ORD00065",1013,"Electronics",4,139.17,883.6],["2025-07-10","ORD00026",1048,"Industrial",8,184.08,2198.0],["2025-04-02","ORD00069",1004,"Apparel",10,184.93,3362.4],["2025-03-23","ORD00020",1007,"Apparel",8,389.09,5275.76],["2026-10-15","ORD00022",1043,"Home",8,554.73,7044.16],["2026-01-15","ORD00042",1049,"Electronics",1,434.62,648.68],["2026-02-28","ORD00067",1007,"Industrial",9,489.43,6204.06],["2025-07-15","ORD00057",1008,"Sports",1,376.13,683.87],["2026-04-14","ORD00015",1005,"Electronics",9,382.72,5838.12],["2026-04-02","ORD00027",1046,"Sports",5,406.95,3229.8],["2025-09-12","ORD00075",1021,"Industrial",5,461.86,3446.7],["2025-10-08","ORD00063",1060,"Electronics",9,460.56,5838.12],["2026-01-18","ORD00012",1025,"Industrial",7,143.8,1830.15],["2025-09-03","ORD00066",1038,"Industrial",3,25.25,128.4],["2025-11-05","ORD00008",1016,"Industrial",3,438.21,1962.15],["2025-11-29","ORD00059",1036,"Industrial",4,409.64,2307.84],["2025-12-06","ORD00017",1056,"Apparel",9,184.93,3026.16],["2025-09-03","ORD00066",1038,"Industrial",6,250.22,2544.6],["2025-04-23","ORD00054",1044,"Electronics",7,393.13,4368.14],["2025-11-29","ORD00059",1036,"Home",6,70.66,632.76],["2025-12-12","ORD00073",1048,"Home",8,637.32,7181.04],["2025-11-05","ORD00008",1016,"Electronics",4,105.07,764.16],["2025-07-17","ORD00072",1018,"Sports",4,284.37,1927.96],["2025-12-29","ORD00060",1035,"Electronics",2,458.31,1454.94],["2026-02-20","ORD00040",1016,"Home",1,56.75,84.7],["2026-03-24","ORD00003",1054,"Home",7,74.88,738.22],["2025-05-21","ORD00051",1003,"Home",7,216.79,2759.12],["2026-04-06","ORD00033",1005,"Electronics",8,335.35,4547.12],["2025-03-17","ORD00028",1055,"Sports",3,322.93,1445.97],["2025-09-12","ORD00075",1021,"Home",8,74.88,843.68],["2025-12-28","ORD00010",1040,"Electronics",7,126.53,1610.35],["2026-04-29","ORD00006",1059,"Home",6,49.97,508.2],["2026-08-16","ORD00055",1017,"Electronics",2,120.36,382.08],["2026-05-26","ORD00045",1030,"Apparel",9,397.52,5339.79],["2026-07-03","ORD00009",1039,"Apparel",1,468.22,659.47],["2025-02-07","ORD00070",1060,"Industrial",4,349.86,2544.44],["2025-11-05","ORD00008",1016,"Apparel",10,350.05,5933.1],["2026-07-03","ORD00009",1039,"Beauty",5,388.74,3085.25],["2025-10-13","ORD00061",1016,"Apparel",2,276.41,825.1],["2025-04-12","ORD00005",1021,"Home",5,425.2,2994.4],["2026-09-12","ORD00037",1058,"Apparel",9,326.32,5339.79],["2026-06-06","ORD00053",1054,"Electronics",1,112.71,191.04],["2026-08-04","ORD00024",1025,"Beauty",6,558.76,5321.52],["2026-05-24","ORD00018",1012,"Electronics",4,434.62,2594.72],["2025-04-23","ORD00054",1044,"Electronics",3,609.78,2576.55],["2025-02-22","ORD00048",1026,"Beauty",7,128.92,1640.8],["2026-07-18","ORD00049",1029,"Home",2,108.89,369.12],["2026-09-19","ORD00058",1050,"Electronics",3,458.31,2182.41],["2026-07-18","ORD00049",1029,"Electronics",4,128.0,764.16],["2026-07-18","ORD00049",1029,"Electronics",7,135.64,1337.28],["2026-07-12","ORD00011",1034,"Home",9,329.38,5389.92],["2025-02-07","ORD00070",1060,"Apparel",7,119.87,1422.19],["2026-05-24","ORD00018",1012,"Beauty",3,147.67,703.2],["2026-05-26","ORD00045",1030,"Industrial",2,429.76,1282.88],["2026-02-12","ORD00016",1033,"Industrial",6,195.07,1648.5],["2026-09-15","ORD00023",1055,"Apparel",2,377.6,1373.08],["2025-04-02","ORD00069",1004,"Sports",4,92.38,626.32],["2025-05-21","ORD00051",1003,"Electronics",2,412.76,1310.34],["2026-10-31","ORD00068",1027,"Apparel",10,136.12,2031.7],["2025-12-06","ORD00017",1056,"Beauty",10,358.71,5052.2],["2026-07-18","ORD00029",1005,"Apparel",7,299.79,3815.49],["2026-09-12","ORD00001",1052,"Beauty",6,298.08,3031.32],["2026-03-24","ORD00003",1054,"Electronics",5,408.67,3243.4],["2026-10-05","ORD00039",1057,"Industrial",8,429.76,5131.52],["2025-12-29","ORD00060",1035,"Beauty",4,482.47,2718.12],["2025-02-07","ORD00070",1060,"Apparel",9,321.16,5255.28],["2026-08-16","ORD00055",1017,"Home",7,232.55,2759.12],["2025-04-02","ORD00069",1004,"Beauty",10,558.76,8869.2],["2026-07-18","ORD00049",1029,"Home",7,589.95,6163.64],["2025-05-05","ORD00030",1015,"Home",10,74.88,1054.6],["2026-05-06","ORD00032",1046,"Electronics",4,382.23,2779.84],["2025-11-29","ORD00059",1036,"Sports",2,493.88,1674.18],["2026-05-26","ORD00045",1030,"Home",5,66.44,527.3],["2025-03-23","ORD00020",1007,"Sports",7,535.08,5590.34],["2025-04-06","ORD00036",1035,"Sports",3,594.33,2511.27],["2025-05-21","ORD00025",1037,"Beauty",7,190.01,2418.36],["2026-04-14","ORD00015",1005,"Apparel",6,485.65,4938.78],["2025-04-12","ORD00005",1021,"Home",2,201.22,638.8],["2025-04-23","ORD00054",1044,"Electronics",5,148.0,1104.5],["2026-04-11","ORD00079",1010,"Sports",6,252.42,2133.12],["2026-03-24","ORD00003",1054,"Beauty",5,128.92,1172.0],["2026-01-13","ORD00031",1037,"Home",3,188.45,958.2],["2026-04-02","ORD00027",1046,"Home",3,66.44,316.38],["2026-07-03","ORD00009",1039,"Sports",8,104.91,1252.64],["2026-10-06","ORD00013",1043,"Electronics",9,403.56,5115.51],["2025-06-13","ORD00077",1020,"Industrial",7,151.11,1923.25],["2025-04-12","ORD00005",1021,"Home",1,188.45,319.4],["2026-09-19","ORD00058",1050,"Home",6,66.44,632.76],["2025-06-13","ORD00077",1020,"Electronics",2,380.82,1136.78],["2025-03-23","ORD00007",1058,"Apparel",10,387.0,5450.7],["2026-05-06","ORD00032",1046,"Industrial",6,352.79,3848.64],["2026-04-29","ORD00006",1059,"Electronics",7,58.1,689.36],["2025-12-02","ORD00052",1009,"Electronics",5,139.17,1104.5],["2025-07-15","ORD00057",1008,"Sports",7,458.19,4787.09],["2025-05-05","ORD00030",1015,"Beauty",2,358.71,1010.44],["2025-02-07","ORD00070",1060,"Sports",9,355.28,5813.64],["2025-03-17","ORD00028",1055,"Apparel",4,350.05,2373.24],["2025-11-05","ORD00008",1016,"Electronics",9,120.36,1719.36],["2026-05-24","ORD00018",1012,"Sports",7,51.3,535.92],["2026-07-06","ORD00065",1013,"Sports",3,54.36,229.68],["2026-08-14","ORD00038",1050,"Electronics",5,343.21,3120.1],["2025-05-05","ORD00030",1015,"Electronics",8,368.17,4992.16],["2026-02-20","ORD00074",1058,"Sports",2,503.13,1597.24],["2025-07-28","ORD00041",1030,"Sports",7,51.3,535.92],["2026-02-20","ORD00074",1058,"Electronics",7,443.05,4368.14],["2025-06-13","ORD00077",1020,"Electronics",8,400.11,5819.76],["2026-01-15","ORD00042",1049,"Industrial",2,378.45,1282.88],["2026-01-13","ORD00031",1037,"Home",5,424.82,3371.6],["2026-10-05","ORD00039",1057,"Industrial",8,386.56,4615.68],["2025-03-26","ORD00019",1052,"Apparel",10,387.0,5450.7],["2026-02-28","ORD00067",1007,"Beauty",8,193.28,2811.28],["2026-07-18","ORD00029",1005,"Home",3,188.45,958.2],["2026-06-06","ORD00053",1054,"Electronics",1,458.31,727.47],["2026-10-05","ORD00039",1057,"Home",6,601.41,5385.78],["2025-04-06","ORD00036",1035,"Electronics",10,465.17,6551.7],["2026-02-20","ORD00074",1058,"Unassigned",1,13.85,19.5],["2026-09-19","ORD00058",1050,"Unassigned",2,81.27,258.0],["2026-09-12","ORD00001",1052,"Unassigned",1,258.3,410.0]],"targets":{"2025-02":32000,"2025-03":41000,"2025-04":49000,"2025-05":20000,"2025-06":13000,"2025-07":24000,"2025-09":8000,"2025-10":17000,"2025-11":31000,"2025-12":45000,"2026-01":19000,"2026-02":38000,"2026-03":7000,"2026-04":29000,"2026-05":34000,"2026-06":6000,"2026-07":47000,"2026-08":22000,"2026-09":30000,"2026-10":40000},"orders":[["2026-09-12",1052,"2026-09-15","2026-09-24","2026-09-27","2026-10-25"],["2026-06-13",1046,"2026-06-17","2026-06-26","2026-06-28","2026-07-25"],["2026-02-10",1004,"2026-02-13","2026-02-17","2026-02-21","2026-03-12"],["2026-04-29",1059,"2026-05-03","2026-05-13","2026-05-16","2026-05-31"],["2025-11-05",1016,"2025-11-06","2025-11-08","2025-11-11","2025-11-18"],["2026-07-03",1039,"2026-07-06","2026-07-13","2026-07-17","2026-07-31"],["2026-07-12",1034,"2026-07-16","2026-07-17","2026-07-20","2026-09-05"],["2026-01-18",1025,"2026-01-21","2026-01-25","2026-01-29","2026-02-28"],["2026-10-06",1043,"2026-10-08","2026-10-09","2026-10-12","2026-11-08"],["2025-12-13",1035,"2025-12-17","2025-12-20","2025-12-24","2026-01-01"],["2026-04-14",1005,"2026-04-15","2026-04-21","2026-04-24","2026-04-29"],["2026-02-12",1033,"2026-02-15","2026-02-21","2026-02-22","2026-04-02"],["2025-12-06",1056,"2025-12-10","2025-12-17","2025-12-19","2026-01-03"],["2025-03-26",1052,"2025-03-31","2025-04-05","2025-04-07","2025-05-02"],["2025-03-23",1007,"2025-03-25","2025-04-02","2025-04-03","2025-04-11"],["2025-02-13",1029,"2025-02-16","2025-02-17","2025-02-21","2025-03-19"],["2026-09-15",1055,"2026-09-17","2026-09-23","2026-09-25","2026-10-25"],["2026-08-04",1025,"2026-08-07","2026-08-15","2026-08-19","2026-08-29"],["2025-05-21",1037,"2025-05-23","2025-05-25","2025-05-28","2025-07-01"],["2026-04-02",1046,"2026-04-04","2026-04-06","2026-04-07","2026-05-05"],["2025-03-17",1055,"2025-03-20","2025-03-26","2025-03-30","2025-04-11"],["2026-07-18",1005,"2026-07-20","2026-07-26","2026-07-30","2026-08-20"],["2025-05-05",1015,"2025-05-06","2025-05-12","2025-05-14","2025-05-24"],["2026-01-13",1037,"2026-01-14","2026-01-19","2026-01-22","2026-02-13"],["2026-05-06",1046,"2026-05-08","2026-05-14","2026-05-16","2026-05-26"],["2025-02-26",1059,"2025-03-01","2025-03-05","2025-03-07","2025-03-22"],["2025-04-06",1035,"2025-04-08","2025-04-18","2025-04-22","2025-05-14"],["2026-08-14",1050,"2026-08-19","2026-08-20","2026-08-24","2026-09-11"],["2026-02-20",1016,"2026-02-24","2026-03-03","2026-03-07","2026-04-11"],["2025-07-28",1030,"2025-07-31","2025-08-07","2025-08-11","2025-08-30"],["2026-01-15",1049,"2026-01-16","2026-01-21","2026-01-25","2026-02-06"],["2025-06-13",1016,"2025-06-15","2025-06-23","2025-06-24","2025-07-24"],["2026-05-26",1030,"2026-05-31","2026-06-08","2026-06-11","2026-06-28"],["2026-08-21",1014,"2026-08-24","2026-09-02","2026-09-03","2026-09-28"],["2025-04-21",1055,"2025-04-25","2025-05-01","2025-05-02","2025-06-21"],["2025-02-22",1026,"2025-02-23","2025-03-02","2025-03-04","2025-03-14"],["2026-07-18",1029,"2026-07-20","2026-07-22","2026-07-25","2026-08-19"],["2025-12-14",1024,"2025-12-19","2025-12-20","2025-12-22","2026-01-17"],["2025-05-21",1003,"2025-05-23","2025-06-02","2025-06-03","2025-06-21"],["2026-08-16",1017,"2026-08-18","2026-08-27","2026-08-31","2026-09-17"],["2026-09-27",1047,"2026-09-28","2026-10-08","2026-10-09","2026-10-14"],["2025-07-15",1008,"2025-07-17","2025-07-24","2025-07-25","2025-08-22"],["2026-09-19",1050,"2026-09-21","2026-09-30","2026-10-01","2026-10-25"],["2025-11-29",1036,"2025-12-03","2025-12-12","2025-12-15","2026-01-17"],["2025-12-29",1035,"2026-01-03","2026-01-11","2026-01-13","2026-01-24"],["2025-10-23",1050,"2025-10-27","2025-11-02","2025-11-04","2025-11-23"],["2025-10-08",1060,"2025-10-12","2025-10-18","2025-10-22","2025-11-14"],["2025-02-13",1019,"2025-02-16","2025-02-24","2025-02-27","2025-03-17"],["2026-07-06",1013,"2026-07-07","2026-07-17","2026-07-21","2026-08-07"],["2026-02-28",1007,"2026-03-01","2026-03-10","2026-03-14","2026-03-19"],["2026-10-31",1027,"2026-11-03","2026-11-08","2026-11-10","2026-12-07"],["2025-04-02",1004,"2025-04-04","2025-04-11","2025-04-14","2025-05-30"],["2026-09-10",1037,"2026-09-12","2026-09-21","2026-09-25","2026-10-06"],["2025-07-17",1018,"2025-07-20","2025-07-23","2025-07-24","2025-08-06"],["2026-02-20",1058,"2026-02-22","2026-02-25","2026-03-01","2026-03-30"],["2025-09-12",1021,"2025-09-15","2025-09-20","2025-09-21","2025-11-02"],["2026-08-10",1047,"2026-08-11","2026-08-13","2026-08-14","2026-09-13"],["2025-05-01",1045,"2025-05-03","2025-05-06","2025-05-08","2025-06-07"],["2026-04-11",1010,"2026-04-16","2026-04-20","2026-04-23","2026-04-30"],["2026-09-03",1044,"2026-09-04","2026-09-14","2026-09-17","2026-10-10"],["2025-05-21",1003,"2025-05-24","2025-06-03","2025-06-03","2025-06-21"],["2026-02-28",1007,"2026-03-02","2026-03-11","2026-03-14","2026-03-19"],["2026-09-15",1055,"2026-09-18","2026-09-24","2026-09-25","2026-10-25"],["2025-04-21",1055,"2025-04-26","2025-05-02","2025-05-02","2025-06-21"],["2025-12-14",1024,"2025-12-20","2025-12-21","2025-12-22","2026-01-17"],["2026-08-10",1047,"2026-08-12","2026-08-14","2026-08-14","2026-09-13"],["2025-07-17",1018,"2025-07-21","2025-07-24","2025-07-24","2025-08-06"],["2026-02-12",1033,"2026-02-16","2026-02-22","2026-02-22","2026-04-02"],["2026-07-12",1034,"2026-07-16","2026-07-17","2026-07-20","2026-07-26"],["2026-02-12",1033,"2026-02-15","2026-02-21","2026-02-22","2026-03-26"],["2025-04-21",1055,"2025-04-25","2025-05-01","2025-05-02","2025-05-12"],["2025-04-02",1004,"2025-04-04","2025-04-11","2025-04-14","2025-04-25"],["2025-09-12",1021,"2025-09-15","2025-09-20","2025-09-21","2025-10-18"],["2025-04-21",1055,"2025-04-26","2025-05-02","2025-05-02","2025-05-12"],["2026-02-12",1033,"2026-02-16","2026-02-22","2026-02-22","2026-03-26"],["2025-12-28",1040,"2026-01-02","2026-01-08","2026-01-10",null],["2026-04-06",1005,"2026-04-08","2026-04-15","2026-04-18",null],["2025-10-18",1034,"2025-10-20","2025-10-25","2025-10-29",null],["2026-09-12",1058,"2026-09-13","2026-09-14","2026-09-15",null],["2025-12-02",1009,"2025-12-07","2025-12-13","2025-12-17",null],["2026-06-06",1054,"2026-06-07","2026-06-13","2026-06-16",null],["2025-02-07",1060,"2025-02-08","2025-02-09","2025-02-10",null],["2025-12-12",1048,"2025-12-14","2025-12-24","2025-12-27",null],["2026-06-06",1054,"2026-06-08","2026-06-14","2026-06-16",null],["2026-09-12",1058,"2026-09-14","2026-09-15","2026-09-15",null],["2026-03-24",1054,"2026-03-25",null,null,null],["2025-04-12",1021,"2025-04-13",null,null,null],["2025-03-23",1058,"2025-03-24",null,null,null],["2026-10-15",1043,"2026-10-16",null,null,null],["2025-07-10",1048,"2025-07-13",null,null,null],["2025-04-23",1044,"2025-04-28",null,null,null],["2025-09-03",1038,"2025-09-05",null,null,null],["2025-05-25",1016,null,null,null,null],["2025-06-13",1020,null,null,null,null],["2026-10-05",1057,null,null,null,null],["2025-10-13",1016,null,null,null,null],["2026-05-24",1012,null,null,null,null]],"campaigns":[["Back to School","Display","2025-08-20","2025-09-10",9000,924288,38767,9209.84],["Black Friday","Paid Search","2025-11-25","2025-11-30",30000,367355,15286,28065.3],["New Year Clearance","Email","2026-01-02","2026-01-20",7000,878066,25633,7188.62],["Spring Launch","Email","2025-03-01","2025-03-31",8000,1536876,45218,7625.36],["Spring Launch 2026","Social","2026-03-01","2026-03-31",12000,1735337,53405,12143.87],["Summer Sale","Social","2025-06-15","2025-07-15",15000,1577966,45435,14607.66]],"inventory":{"2025-01":6476,"2025-02":5838,"2025-03":6134,"2025-04":6723,"2025-05":5007,"2025-06":7811,"2025-07":6553,"2025-08":4701,"2025-09":6623,"2025-10":5482,"2025-11":6208,"2025-12":6366}};
+
+/* ---------------- helpers ---------------- */
+const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money = (v, dp = 1) => { const a = Math.abs(v), s = v < 0 ? '−' : '';
+  if (a >= 1e6) return s + '$' + (a / 1e6).toFixed(dp) + 'M';
+  if (a >= 1e3) return s + '$' + (a / 1e3).toFixed(dp) + 'K';
+  return s + '$' + a.toFixed(0); };
+const pct = (v, dp = 1) => (v * 100).toFixed(dp) + '%';
+const ml = ym => MON[+ym.slice(5, 7) - 1] + ' ' + ym.slice(0, 4);
+const mshort = ym => MON[+ym.slice(5, 7) - 1] + ' ’' + ym.slice(2, 4);
+const sum = (a, f) => a.reduce((t, x) => t + f(x), 0);
+const initials = n => n.split(' ').slice(0, 2).map(p => p[0]).join('');
+const dayDiff = (a, b) => (a && b) ? (Date.parse(b) - Date.parse(a)) / 864e5 : null;
+const mean = a => a.length ? a.reduce((t, x) => t + x, 0) / a.length : 0;
+
+function smooth(pts) {
+  if (!pts.length) return '';
+  let d = `M${pts[0][0].toFixed(1)},${pts[0][1].toFixed(1)}`;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2;
+    const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
+    const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+    // clamp control points vertically so the curve never overshoots its neighbours
+    const lo = Math.min(p1[1], p2[1]), hi = Math.max(p1[1], p2[1]);
+    c1[1] = Math.max(lo, Math.min(hi, c1[1])); c2[1] = Math.max(lo, Math.min(hi, c2[1]));
+    d += ` C${c1[0].toFixed(1)},${c1[1].toFixed(1)} ${c2[0].toFixed(1)},${c2[1].toFixed(1)} ${p2[0].toFixed(1)},${p2[1].toFixed(1)}`;
+  }
+  return d;
+}
+function niceStep(raw) { const p = Math.pow(10, Math.floor(Math.log10(raw))); const f = raw / p; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * p; }
+function deltaPill(cur, prev, opts = {}) {
+  if (prev == null || cur == null || !isFinite(cur) || !isFinite(prev) || prev === 0) return '<span class="pill flat">no prior year</span>';
+  const d = opts.points ? (cur - prev) * 100 : cur / prev - 1;
+  const txt = opts.points ? `${d >= 0 ? '+' : '−'}${Math.abs(d).toFixed(1)} pts` : `${d >= 0 ? '+' : '−'}${Math.abs(d * 100).toFixed(1)}%`;
+  if (Math.abs(opts.points ? d / 100 : d) < 0.0005) return '<span class="pill flat">flat →</span>';
+  const up = d > 0, good = opts.benchmark != null ? d <= opts.benchmark : opts.lowerIsBetter ? !up : up;
+  return `<span class="pill ${good ? 'good' : 'bad'}" title="${esc(opts.title || 'Year to date vs the same months last year')}">${txt} ${up ? '↑' : '↓'}</span>`;
+}
+
+/* ---------------- state ---------------- */
+const state = { view: 'overview', period: 'all', region: 'all', segment: 'all', grain: 'month', sort: { key: 'rev', dir: -1 } };
+try { const s = JSON.parse(localStorage.getItem('si-pulse') || '{}'); for (const k of ['view', 'period', 'region', 'segment', 'grain']) if (s[k]) state[k] = s[k]; } catch (e) {}
+const fromHash = location.hash.slice(1); if (['overview', 'accounts', 'operations'].includes(fromHash)) state.view = fromHash;
+function save() { try { localStorage.setItem('si-pulse', JSON.stringify(state)); } catch (e) {} }
+
+const CUST = D.customers;
+const regions = [...new Set(Object.values(CUST).map(c => c[2]))].sort();
+const segments = [...new Set(Object.values(CUST).map(c => c[1]))].sort();
+const allMonthsData = [...new Set([...D.lines.map(l => l[0].slice(0, 7)), ...Object.keys(D.targets)])].sort();
+function monthRange(a, b) { const out = []; let [y, m] = a.split('-').map(Number); const [by, bm] = b.split('-').map(Number);
+  while (y < by || (y === by && m <= bm)) { out.push(`${y}-${String(m).padStart(2, '0')}`); if (++m > 12) { m = 1; y++; } } return out; }
+const ALL_MONTHS = monthRange(allMonthsData[0], allMonthsData[allMonthsData.length - 1]);
+const LAST_MONTH = ALL_MONTHS[ALL_MONTHS.length - 1];
+
+const custOk = (id, o = {}) => { const c = CUST[id]; if (!c) return false;
+  return (o.ignoreRegion || state.region === 'all' || c[2] === state.region) && (o.ignoreSegment || state.segment === 'all' || c[1] === state.segment); };
+const periodOk = d => state.period === 'all' || d.startsWith(state.period);
+const scoped = (o = {}) => D.lines.filter(l => (o.ignorePeriod || periodOk(l[0])) && custOk(l[2], o));
+const periodMonths = () => ALL_MONTHS.filter(m => state.period === 'all' || m.startsWith(state.period));
+function agg(lines) {
+  const rev = sum(lines, l => l[6]), cogs = sum(lines, l => l[4] * l[5]);
+  const orders = new Set(lines.map(l => l[1])).size;
+  return { rev, cogs, gp: rev - cogs, gm: rev ? (rev - cogs) / rev : 0, orders, aov: orders ? rev / orders : 0 };
+}
+function byMonth(lines) { const m = {}; for (const l of lines) { const k = l[0].slice(0, 7); (m[k] = m[k] || []).push(l); } return m; }
+function ytd() { // current year to date vs the same months a year earlier, same region/segment
+  if (state.period === '2025') return null;
+  const base = scoped({ ignorePeriod: true }); const cut = LAST_MONTH.slice(5);
+  const cy = LAST_MONTH.slice(0, 4), py = String(+cy - 1);
+  const cur = agg(base.filter(l => l[0].startsWith(cy) && l[0].slice(5, 7) <= cut));
+  const prev = agg(base.filter(l => l[0].startsWith(py) && l[0].slice(5, 7) <= cut));
+  return { cur, prev };
+}
+const filteredByCustomer = () => state.region !== 'all' || state.segment !== 'all';
+const scopeLabel = () => [state.region !== 'all' ? state.region : null, state.segment !== 'all' ? state.segment : null].filter(Boolean).join(' · ');
+
+/* ---------------- tooltip ---------------- */
+const tip = $('#tip');
+function moveTip(e) {
+  const t = e.target.closest && e.target.closest('[data-tip]');
+  if (!t) { tip.classList.remove('on'); return; }
+  tip.innerHTML = t.getAttribute('data-tip'); tip.classList.add('on');
+  const r = tip.getBoundingClientRect(); let x = e.clientX + 14, y = e.clientY - r.height - 12;
+  if (x + r.width > innerWidth - 8) x = e.clientX - r.width - 14; if (y < 8) y = e.clientY + 18;
+  tip.style.left = x + 'px'; tip.style.top = y + 'px';
+}
+document.addEventListener('pointermove', moveTip); document.addEventListener('pointerdown', moveTip);
+document.addEventListener('scroll', () => tip.classList.remove('on'), true);
+
+/* ---------------- charts ---------------- */
+let gid = 0;
+function areaChart(el, pts, o) {
+  const w = Math.max(el.clientWidth, 240), h = o.h || 200, padL = o.axis ? 44 : 2, padR = o.axis ? 10 : 6, padT = o.axis ? 14 : 8, padB = o.axis ? 28 : 8;
+  if (pts.length < 2) { el.innerHTML = `<div class="empty" style="min-height:${h}px">Not enough months in this selection to draw a trend.</div>`; return; }
+  const vals = pts.map(p => p.v); let lo = Math.min(...vals), hi = Math.max(...vals);
+  if (o.axis) { const st = niceStep((hi - lo) / 3 || 0.01); lo = Math.floor(lo / st) * st; hi = Math.ceil(hi / st) * st; if (hi === lo) hi = lo + st; o.step = st; }
+  else { const pad = (hi - lo) * 0.12 || 1; lo -= pad; hi += pad; }
+  const X = i => padL + i * (w - padL - padR) / (pts.length - 1), Y = v => padT + (1 - (v - lo) / (hi - lo)) * (h - padT - padB);
+  const xy = pts.map((p, i) => [X(i), Y(p.v)]); const d = smooth(xy); const id = 'g' + (++gid);
+  let s = `<svg width="${w}" height="${h}" role="img" aria-label="${esc(o.label)}"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(${o.color});stop-opacity:.28"/><stop offset="1" style="stop-color:var(${o.color});stop-opacity:0"/></linearGradient></defs>`;
+  if (o.axis) for (let v = lo; v <= hi + 1e-9; v += o.step) { const y = Y(v);
+    s += `<line x1="${padL}" x2="${w - padR}" y1="${y}" y2="${y}" style="stroke:var(--line)"/><text x="${padL - 8}" y="${y + 4}" text-anchor="end" font-size="11" style="fill:var(--muted)">${o.yFmt(v)}</text>`; }
+  s += `<path d="${d} L${X(pts.length - 1)},${h - padB} L${padL},${h - padB} Z" style="fill:url(#${id})"/>`;
+  s += `<path d="${d}" style="fill:none;stroke:var(${o.color})" stroke-width="2.4" stroke-linejoin="round"/>`;
+  if (o.axis) { const every = Math.ceil(pts.length / Math.max(2, Math.floor((w - padL) / 70)));
+    pts.forEach((p, i) => { if (i % every === 0 || i === pts.length - 1 && (pts.length - 1) % every > every / 2) s += `<text x="${X(i)}" y="${h - 8}" text-anchor="middle" font-size="11" style="fill:var(--muted)">${esc(p.short)}</text>`; }); }
+  const [ex, ey] = xy[xy.length - 1];
+  s += `<circle cx="${ex}" cy="${ey}" r="5" style="fill:var(--card);stroke:var(${o.color})" stroke-width="2.5"/>`;
+  const half = (w - padL - padR) / (pts.length - 1) / 2;
+  pts.forEach((p, i) => { const [x, y] = xy[i];
+    s += `<g class="hc" data-tip="${esc(p.tip)}"><rect x="${x - half}" y="0" width="${half * 2}" height="${h}" style="fill:transparent"/><line class="x" x1="${x}" x2="${x}" y1="${padT}" y2="${h - padB}" style="stroke:var(--muted)" stroke-dasharray="3 4"/><circle class="x" cx="${x}" cy="${y}" r="5.5" style="fill:var(--card);stroke:var(${o.color})" stroke-width="3"/></g>`; });
+  el.innerHTML = s + '</svg>';
+}
+
+function targetBars(el, rows, showTarget) {
+  const w = Math.max(el.clientWidth, 260), h = 236, padL = 46, padR = 4, padT = 10, padB = 42;
+  const top0 = Math.max(...rows.map(r => Math.max(r.rev, showTarget ? r.target : 0)), 1);
+  const st = niceStep(top0 / 3), top = Math.ceil(top0 / st) * st;
+  const Y = v => padT + (1 - v / top) * (h - padT - padB), base = h - padB;
+  const step = (w - padL - padR) / rows.length, bw = Math.max(5, Math.min(30, step * 0.58));
+  let s = `<svg width="${w}" height="${h}" role="img" aria-label="Monthly revenue against target">`;
+  for (let v = 0; v <= top + 1e-9; v += st) s += `<line x1="${padL}" x2="${w - padR}" y1="${Y(v)}" y2="${Y(v)}" style="stroke:var(--line)"/><text x="${padL - 8}" y="${Y(v) + 4}" text-anchor="end" font-size="11" style="fill:var(--muted)">${money(v, 0)}</text>`;
+  const labelEvery = step >= 24 ? 1 : step >= 14 ? 2 : 3;
+  rows.forEach((r, i) => {
+    const x = padL + i * step + (step - bw) / 2, cx = x + bw / 2;
+    if (showTarget && r.target > 0) s += `<rect x="${x}" y="${Y(r.target)}" width="${bw}" height="${base - Y(r.target)}" rx="4" style="fill:var(--track)"/>`;
+    if (r.rev > 0) s += `<rect x="${x}" y="${Y(r.rev)}" width="${bw}" height="${base - Y(r.rev)}" rx="4" style="fill:var(--saffron)"/>`;
+    if (!r.rev && !(showTarget && r.target)) s += `<line x1="${x}" x2="${x + bw}" y1="${base - 2}" y2="${base - 2}" style="stroke:var(--muted)" stroke-dasharray="2 3"/>`;
+    if (i % labelEvery === 0) s += `<text x="${cx}" y="${h - 24}" text-anchor="middle" font-size="11" style="fill:var(--muted)">${MON[+r.m.slice(5) - 1][0]}</text>`;
+    if (i === 0 || r.m.endsWith('-01')) s += `<text x="${cx}" y="${h - 6}" text-anchor="middle" font-size="11" font-weight="700" style="fill:var(--ink2)">${r.m.slice(0, 4)}</text>`;
+    const tipTxt = (!r.rev && !r.target) ? `<b>${ml(r.m)}</b><br>No sales or target recorded`
+      : `<b>${ml(r.m)}</b><br>Revenue ${money(r.rev)}` + (showTarget && r.target ? `<br>Target ${money(r.target)} · ${pct(r.rev / r.target, 0)} of plan` : '');
+    s += `<rect x="${padL + i * step}" y="${padT}" width="${step}" height="${h - padT}" style="fill:transparent" data-tip="${esc(tipTxt)}"/>`;
+  });
+  el.innerHTML = s + '</svg>';
+}
+
+function curveChart(el, custs) {
+  const w = Math.max(el.clientWidth, 260), h = 268, padL = 44, padR = 14, padT = 14, padB = 30, n = custs.length;
+  if (n < 2) { el.innerHTML = `<div class="empty" style="min-height:${h}px">Only ${n} account in this selection.</div>`; return; }
+  const total = sum(custs, c => c.rev);
+  const X = i => padL + (i / n) * (w - padL - padR), Y = v => padT + (1 - v) * (h - padT - padB);
+  let cum = 0; const pts = [[X(0), Y(0)]]; const cums = [];
+  custs.forEach((c, i) => { cum += c.rev; cums.push(cum / total); pts.push([X(i + 1), Y(cum / total)]); });
+  let s = `<svg width="${w}" height="${h}" role="img" aria-label="Cumulative revenue share by ranked account">`;
+  [0, .25, .5, .75, 1].forEach(v => s += `<line x1="${padL}" x2="${w - padR}" y1="${Y(v)}" y2="${Y(v)}" style="stroke:var(--line)"/><text x="${padL - 8}" y="${Y(v) + 4}" text-anchor="end" font-size="11" style="fill:var(--muted)">${v * 100}%</text>`);
+  s += `<line x1="${X(0)}" y1="${Y(0)}" x2="${X(n)}" y2="${Y(1)}" style="stroke:var(--muted)" stroke-dasharray="4 5"/>`;
+  s += `<text x="${X(n * .72)}" y="${Y(.72) + 16}" font-size="11" style="fill:var(--muted)" text-anchor="start" transform="rotate(${-Math.atan2(Y(0) - Y(1), X(n) - X(0)) * 180 / Math.PI} ${X(n * .72)} ${Y(.72) + 16})">even split</text>`;
+  s += `<path d="${smooth(pts)} L${X(n)},${Y(0)} Z" style="fill:var(--pine);fill-opacity:.09"/>`;
+  s += `<path d="${smooth(pts)}" style="fill:none;stroke:var(--pine)" stroke-width="2.2"/>`;
+  const k10 = Math.min(10, n); s += `<path d="${smooth(pts.slice(0, k10 + 1))}" style="fill:none;stroke:var(--saffron)" stroke-width="4" stroke-linecap="round"/>`;
+  s += `<line x1="${padL}" x2="${w - padR}" y1="${Y(.8)}" y2="${Y(.8)}" style="stroke:var(--coral)" stroke-dasharray="6 5" stroke-width="1.4"/><text x="${w - padR}" y="${Y(.8) + 16}" text-anchor="end" font-size="11.5" font-weight="700" style="fill:var(--coral-ink)">80% of revenue</text>`;
+  const k = cums.findIndex(c => c >= .8);
+  if (k >= 0) { const [px, py] = pts[k + 1]; const lbl = `${k + 1} of ${n} accounts → 80%`; const tw = lbl.length * 6.9 + 22, tx = Math.min(Math.max(px - tw / 2, padL), w - padR - tw);
+    s += `<circle cx="${px}" cy="${py}" r="6" style="fill:var(--card);stroke:var(--coral)" stroke-width="3"/><rect x="${tx}" y="${py - 44}" width="${tw}" height="28" rx="9" style="fill:var(--tip-bg)"/><text x="${tx + tw / 2}" y="${py - 25}" text-anchor="middle" font-size="12.5" font-weight="700" style="fill:var(--tip-fg)">${lbl}</text>`; }
+  [1, k10, n].forEach(i => s += `<text x="${X(i) - (w - padL - padR) / n / 2}" y="${h - 8}" text-anchor="middle" font-size="11" style="fill:var(--muted)">#${i}</text>`);
+  const cw = (w - padL - padR) / n;
+  custs.forEach((c, i) => { const [x, y] = pts[i + 1];
+    s += `<g class="hc" data-tip="${esc(`<b>#${i + 1} ${esc(c.name)}</b><br>${money(c.rev)} · ${pct(c.rev / total)} of revenue<br>Top ${i + 1} together: ${pct(cums[i], 0)}`)}"><rect x="${x - cw}" y="0" width="${cw}" height="${h}" style="fill:transparent"/><circle class="x" cx="${x}" cy="${y}" r="5" style="fill:var(--card);stroke:var(${i < 10 ? '--saffron' : '--pine'})" stroke-width="3"/></g>`; });
+  el.innerHTML = s + '</svg>';
+}
+
+function invChart(el, rows) {
+  const w = Math.max(el.clientWidth, 240), h = 196, padL = 6, padR = 6, padT = 30, padB = 26;
+  const mx = Math.max(...rows.map(r => r.v)), avg = mean(rows.map(r => r.v));
+  const step = (w - padL - padR) / rows.length, bw = Math.max(6, Math.min(30, step * .6));
+  const Y = v => padT + (1 - v / mx) * (h - padT - padB);
+  let s = `<svg width="${w}" height="${h}" role="img" aria-label="Units on hand by month">`;
+  rows.forEach((r, i) => { const x = padL + i * step + (step - bw) / 2; const isMax = r.v === mx;
+    s += `<rect x="${x}" y="${Y(r.v)}" width="${bw}" height="${h - padB - Y(r.v)}" rx="4" style="fill:var(${isMax ? '--pine' : '--sageL'})"/>`;
+    if (step >= 22 || i % 2 === 0) s += `<text x="${x + bw / 2}" y="${h - 8}" text-anchor="middle" font-size="11" style="fill:var(--muted)">${MON[+r.m.slice(5) - 1]}</text>`;
+    s += `<rect x="${padL + i * step}" y="0" width="${step}" height="${h}" style="fill:transparent" data-tip="${esc(`<b>${ml(r.m)}</b><br>${r.v.toLocaleString('en-US')} units${isMax ? ' · peak' : ''}`)}"/>`; });
+  const ay = Y(avg);
+  s += `<line x1="${padL}" x2="${w - padR}" y1="${ay}" y2="${ay}" style="stroke:var(--saffron)" stroke-width="2" stroke-dasharray="6 5"/>`;
+  s += `<rect x="${w - padR - 118}" y="${ay - 27}" width="118" height="22" rx="7" style="fill:var(--saffronL)"/><text x="${w - padR - 59}" y="${ay - 12}" text-anchor="middle" font-size="11.5" font-weight="700" style="fill:var(--ink)">avg ${Math.round(avg).toLocaleString('en-US')} units</text>`;
+  el.innerHTML = s + '</svg>';
+}
+
+function barList(rows, o = {}) {
+  const mx = Math.max(...rows.map(r => r.v), 1);
+  return rows.map((r, i) => `<div class="hb ${o.thin ? 'thin' : ''} ${r.sel ? 'sel' : ''}" data-tip="${esc(r.tip || '')}">
+      <div class="hb-top"><span class="hb-name">${o.rank ? `<b>${String(i + 1).padStart(2, '0')}</b>` : ''}${esc(r.name)}</span><span class="hb-val num">${r.small ? `<small>${r.small}</small>` : ''}${r.label}</span></div>
+      <div class="hb-track"><div class="hb-fill" style="width:${(r.v / mx * 100).toFixed(1)}%;background:var(${r.color || '--saffron'})"></div></div></div>`).join('');
+}
+
+/* ---------------- views ---------------- */
+function renderOverview() {
+  const lines = scoped(), a = agg(lines), y = ytd(), months = periodMonths(), bm = byMonth(lines);
+  const company = agg(D.lines.filter(l => periodOk(l[0])));
+  const filtered = filteredByCustomer();
+  const target = sum(months, m => D.targets[m] || 0);
+
+  $('#h-rev').textContent = money(a.rev);
+  const dates = lines.map(l => l[0]).sort();
+  $('#h-meta').textContent = lines.length ? `${a.orders} orders · ${ml(dates[0].slice(0, 7))} – ${ml(dates[dates.length - 1].slice(0, 7))}${filtered ? ' · ' + scopeLabel() : ''}` : 'No orders in this selection';
+  const ringV = filtered ? (company.rev ? a.rev / company.rev : 0) : (target ? a.rev / target : 0);
+  const R = 52, C = 2 * Math.PI * R;
+  $('#h-ring').setAttribute('aria-label', filtered ? `${pct(ringV)} of company revenue` : `${pct(ringV)} of target`);
+  $('#h-ring').innerHTML = `<circle cx="66" cy="66" r="${R}" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="13"/>
+    <circle cx="66" cy="66" r="${R}" fill="none" style="stroke:var(--saffron)" stroke-width="13" stroke-linecap="round" stroke-dasharray="${Math.min(ringV, 1) * C} ${C}" transform="rotate(-90 66 66)"/>
+    <text x="66" y="68" text-anchor="middle" font-family="Bricolage Grotesque, Segoe UI, sans-serif" font-weight="700" font-size="24" fill="#fff">${pct(ringV)}</text>
+    <text x="66" y="88" text-anchor="middle" font-size="11.5" fill="rgba(255,255,255,.7)">${filtered ? 'of company' : 'of target'}</text>`;
+  if (filtered) {
+    $('#h-l1').textContent = 'Company revenue'; $('#h-v1').textContent = money(company.rev);
+    $('#h-l2').textContent = 'Gross margin'; $('#h-v2').textContent = pct(a.gm); $('#h-v2').classList.remove('neg');
+  } else {
+    $('#h-l1').textContent = 'Target'; $('#h-v1').textContent = money(target);
+    $('#h-l2').textContent = 'Gap to target'; $('#h-v2').textContent = money(a.rev - target); $('#h-v2').classList.toggle('neg', a.rev < target);
+  }
+
+  $('#k-gm').textContent = pct(a.gm); $('#k-or').textContent = a.orders; $('#k-aov').textContent = money(a.aov);
+  $('#k-gm-d').innerHTML = y ? deltaPill(y.cur.gm, y.prev.gm, { points: true }) : deltaPill(null, null);
+  $('#k-or-d').innerHTML = y ? deltaPill(y.cur.orders, y.prev.orders) : deltaPill(null, null);
+  $('#k-aov-d').innerHTML = y ? deltaPill(y.cur.aov, y.prev.aov) : deltaPill(null, null);
+  $('#gp-v').textContent = money(a.gp); $('#cogs-v').textContent = money(a.cogs);
+  $('#gp-d').innerHTML = y ? deltaPill(y.cur.gp, y.prev.gp) : deltaPill(null, null);
+  $('#cogs-d').innerHTML = y ? deltaPill(y.cur.cogs, y.prev.cogs, { benchmark: y.prev.rev ? y.cur.rev / y.prev.rev - 1 : null, title: 'Year to date vs last year. Green while costs grow slower than revenue.' }) : deltaPill(null, null);
+
+  // margin pulse
+  let mp;
+  if (state.grain === 'quarter') {
+    const q = {}; for (const m of months) { const k = m.slice(0, 4) + '-Q' + Math.ceil(+m.slice(5) / 3); const g = agg(bm[m] || []); q[k] = q[k] || { rev: 0, gp: 0 }; q[k].rev += g.rev; q[k].gp += g.gp; }
+    mp = Object.entries(q).filter(([, v]) => v.rev > 0).map(([k, v]) => ({ v: v.gp / v.rev, short: k.slice(5) + ' ’' + k.slice(2, 4), tip: `<b>${k.slice(5)} ${k.slice(0, 4)}</b><br>Gross margin ${pct(v.gp / v.rev)}<br>Revenue ${money(v.rev)}` }));
+  } else {
+    mp = months.filter(m => bm[m]).map(m => { const g = agg(bm[m]); return { v: g.gm, short: mshort(m), tip: `<b>${ml(m)}</b><br>Gross margin ${pct(g.gm)}<br>Revenue ${money(g.rev)}` }; });
+  }
+  areaChart($('#ch-margin'), mp, { h: 230, axis: true, color: '--pine2', label: 'Gross margin trend', yFmt: v => (v * 100).toFixed(0) + '%' });
+
+  const mrows = months.map(m => { const g = agg(bm[m] || []); return { m, rev: g.rev, gp: g.gp, cogs: g.cogs, target: D.targets[m] || 0 }; });
+  const withSales = mrows.filter(r => r.rev > 0);
+  areaChart($('#ch-gp'), withSales.map(r => ({ v: r.gp, tip: `<b>${ml(r.m)}</b><br>Gross profit ${money(r.gp)}` })), { h: 110, color: '--pine2', label: 'Gross profit by month' });
+  areaChart($('#ch-cogs'), withSales.map(r => ({ v: r.cogs, tip: `<b>${ml(r.m)}</b><br>Cost of goods ${money(r.cogs)}` })), { h: 110, color: '--coral', label: 'Cost of goods by month' });
+
+  targetBars($('#ch-bars'), mrows, !filtered);
+  $('#bars-legend').innerHTML = `<span><i style="background:var(--saffron)"></i>Actual</span>` + (filtered ? '' : `<span><i style="background:var(--track)"></i>Target</span>`);
+  $('#bars-sub').textContent = filtered ? `Targets are set company-wide, so only actuals are shown for ${scopeLabel()}` : 'Monthly. Saffron is actual, the track behind it is the plan';
+
+  const cats = {}; for (const l of lines) cats[l[3]] = (cats[l[3]] || 0) + l[6];
+  const catRows = Object.entries(cats).sort((p, q) => q[1] - p[1]);
+  $('#cat').innerHTML = catRows.length ? barList(catRows.map(([n, v]) => ({ name: n, v, label: money(v), small: pct(v / a.rev, 0), tip: `<b>${esc(n)}</b><br>${money(v)} · ${pct(v / a.rev)} of revenue` })), { thin: true })
+    : '<div class="empty">No sales in this selection.</div>';
+
+  const cm = custAgg(lines).slice(0, 7);
+  $('#top-sub').textContent = cm.length ? `Avg margin ${pct(a.gm, 0)}` : '';
+  $('#top').innerHTML = cm.length ? cm.map((c, i) => `<div class="r"><span class="av ${i === 0 ? 'lead' : ''}">${esc(initials(c.name))}</span>
+      <span class="nm">${esc(c.name)}</span><span class="mt hide-sm">${esc(c.seg)} · ${esc(c.reg)}</span><span class="mt hide-sm">${esc(c.mgr)}</span>
+      <span class="rv num">${money(c.rev)}</span><span class="gm num ${c.gm >= a.gm ? 'good-t' : 'bad-t'}" title="${c.gm >= a.gm ? 'At or above' : 'Below'} the average margin">GM ${pct(c.gm, 0)} ${c.gm >= a.gm ? '▲' : '▼'}</span></div>`).join('')
+    : '<div class="empty">No accounts in this selection.</div>';
+
+  // analyst note
+  const tm = mrows.filter(r => r.target > 0);
+  if (!filtered && tm.length) {
+    const miss = tm.filter(r => r.rev < r.target), ratios = miss.map(r => 1 - r.rev / r.target);
+    if (miss.length >= tm.length * .8) {
+      $('#note').innerHTML = `Revenue missed target in <b>${miss.length} of ${tm.length} months</b>, always by a narrow ${pct(Math.min(...ratios), 0)}–${pct(Math.max(...ratios), 0)}. A gap that steady points to targets set slightly too high, not to a sales problem.`;
+      $('#note-cta').textContent = 'Re-baseline next year’s targets →';
+    } else {
+      $('#note').innerHTML = `Revenue hit target in <b>${tm.length - miss.length} of ${tm.length} months</b> and landed at <b>${pct(a.rev / target)}</b> of plan overall.`;
+      $('#note-cta').textContent = 'Check the weakest months by category →';
+    }
+  } else if (a.rev) {
+    const share = company.rev ? a.rev / company.rev : 0, top = cm[0];
+    $('#note').innerHTML = `<b>${esc(scopeLabel())}</b> brings in ${pct(share)} of company revenue at a ${pct(a.gm)} margin, ${a.gm >= company.gm ? 'above' : 'below'} the ${pct(company.gm)} company average. ${top ? `Largest account: <b>${esc(top.name)}</b> (${pct(top.rev / a.rev, 0)}).` : ''}`;
+    $('#note-cta').textContent = 'Open the Accounts page for detail →';
+  } else { $('#note').textContent = 'No sales match this combination of filters.'; $('#note-cta').textContent = ''; }
+}
+
+function custAgg(lines) {
+  const m = {}; for (const l of lines) { const c = m[l[2]] = m[l[2]] || { id: l[2], rev: 0, cogs: 0, orders: new Set() }; c.rev += l[6]; c.cogs += l[4] * l[5]; c.orders.add(l[1]); }
+  return Object.values(m).map(c => { const k = CUST[c.id]; return { ...c, orders: c.orders.size, gm: c.rev ? (c.rev - c.cogs) / c.rev : 0, name: k[0], seg: k[1], reg: k[2], mgr: k[3], terms: k[4], credit: k[5] }; }).sort((p, q) => q.rev - p.rev);
+}
+
+function renderAccounts() {
+  const lines = scoped(), a = agg(lines), custs = custAgg(lines);
+  const book = Object.keys(CUST).filter(id => custOk(id)).length;
+  $('#a-active').textContent = custs.length; $('#a-active-s').textContent = book ? `${pct(custs.length / book, 0)} of ${book} on the books` : '';
+  $('#a-rpc').textContent = custs.length ? money(a.rev / custs.length) : '–';
+  $('#a-top10').textContent = a.rev ? pct(sum(custs.slice(0, 10), c => c.rev) / a.rev) : '–';
+
+  const rl = scoped({ ignoreRegion: true }), rt = sum(rl, l => l[6]), reg = {};
+  for (const l of rl) { const r = CUST[l[2]][2]; reg[r] = reg[r] || { rev: 0, ids: new Set() }; reg[r].rev += l[6]; reg[r].ids.add(l[2]); }
+  const rrows = Object.entries(reg).sort((p, q) => q[1].rev - p[1].rev);
+  $('#regions').innerHTML = rrows.length ? barList(rrows.map(([n, r], i) => ({ name: n, v: r.rev, label: money(r.rev), small: pct(r.rev / rt, 0), color: (state.region === 'all' ? i === 0 : n === state.region) ? '--pine' : '--sage', sel: n === state.region,
+    tip: `<b>${esc(n)}</b><br>${money(r.rev)} · ${pct(r.rev / rt)} of revenue<br>${r.ids.size} active accounts` })), { rank: true }) : '<div class="empty">No sales in this selection.</div>';
+  $('#regions-foot').textContent = rrows.length ? `${rrows[0][0]} leads with ${pct(rrows[0][1].rev / rt, 0)} of revenue across ${rrows[0][1].ids.size} accounts.` : '';
+
+  curveChart($('#ch-curve'), custs);
+
+  const sl = scoped({ ignoreSegment: true }), stt = sum(sl, l => l[6]), seg = {};
+  for (const l of sl) { const k = CUST[l[2]][1]; seg[k] = seg[k] || { lines: [], ids: new Set() }; seg[k].lines.push(l); seg[k].ids.add(l[2]); }
+  const SEGC = { 'Mid-Market': ['--pine', '#fff'], 'Enterprise': ['--saffron', '#16201B'], 'SMB': ['--sage', '#fff'] };
+  const srows = Object.entries(seg).map(([k, v]) => ({ k, ...agg(v.lines), n: v.ids.size })).sort((p, q) => q.rev - p.rev);
+  $('#segbar').innerHTML = srows.map(r => `<div style="flex:${r.rev};background:var(${SEGC[r.k][0]});color:${SEGC[r.k][1]};${state.segment !== 'all' && state.segment !== r.k ? 'opacity:.35' : ''}" data-tip="${esc(`<b>${r.k}</b><br>${money(r.rev)} · ${pct(r.rev / stt)}`)}">${pct(r.rev / stt, 0)}</div>`).join('');
+  $('#segtable').innerHTML = `<thead><tr><th>Segment</th><th class="n">Revenue</th><th class="n">Share</th><th class="n">GM %</th><th class="n">Accounts</th></tr></thead><tbody>` +
+    srows.map(r => `<tr><td class="strong"><span class="dot" style="background:var(${SEGC[r.k][0]})"></span>${r.k}</td><td class="n num strong">${money(r.rev)}</td><td class="n num">${pct(r.rev / stt, 0)}</td><td class="n num">${pct(r.gm)}</td><td class="n num">${r.n}</td></tr>`).join('') + '</tbody>';
+
+  const mg = {}; for (const c of custs) { mg[c.mgr] = mg[c.mgr] || { rev: 0, n: 0, gp: 0 }; mg[c.mgr].rev += c.rev; mg[c.mgr].gp += c.rev - c.cogs; mg[c.mgr].n++; }
+  const mrows = Object.entries(mg).sort((p, q) => q[1].rev - p[1].rev);
+  $('#mgrs').innerHTML = mrows.length ? barList(mrows.map(([n, m], i) => ({ name: n, v: m.rev, label: money(m.rev), small: `${m.n} accts · GM ${pct(m.gp / m.rev, 0)}`, color: i === 0 ? '--pine' : '--sage',
+    tip: `<b>${esc(n)}</b><br>${money(m.rev)} from ${m.n} accounts<br>Gross margin ${pct(m.gp / m.rev)}` }))) : '<div class="empty">No accounts in this selection.</div>';
+
+  // account book
+  const cols = [['name', 'Customer'], ['seg', 'Segment'], ['reg', 'Region'], ['mgr', 'Manager'], ['terms', 'Terms'], ['orders', 'Orders', 1], ['rev', 'Revenue', 1], ['gm', 'GM %', 1], ['util', 'Credit used', 1]];
+  custs.forEach(c => c.util = c.rev / c.credit);
+  const { key, dir } = state.sort;
+  const rows = [...custs].sort((p, q) => (typeof p[key] === 'string' ? p[key].localeCompare(q[key]) : p[key] - q[key]) * dir);
+  $('#book-sub').textContent = `${custs.length} accounts`;
+  $('#book').innerHTML = `<thead><tr>${cols.map(([k, l, n]) => `<th class="${n ? 'n' : ''}"><button type="button" data-sort="${k}" ${k === key ? `data-dir="${dir > 0 ? '↑' : '↓'}"` : ''} aria-label="Sort by ${l}">${l}</button></th>`).join('')}</tr></thead><tbody>` +
+    (rows.length ? rows.map(c => `<tr><td class="strong">${esc(c.name)}</td><td>${esc(c.seg)}</td><td>${esc(c.reg)}</td><td>${esc(c.mgr)}</td><td>${esc(c.terms)}</td>
+      <td class="n num">${c.orders}</td><td class="n num strong">${money(c.rev)}</td>
+      <td class="n num ${c.gm >= a.gm ? 'good-t' : 'bad-t'}">${pct(c.gm, 0)} ${c.gm >= a.gm ? '▲' : '▼'}</td>
+      <td class="n num"><span class="mini"><span class="bar"><i style="width:${Math.min(c.util, 1) * 100}%;background:var(${c.util > 1 ? '--coral' : '--saffron'})"></i></span><span class="${c.util > 1 ? 'bad-t' : ''}" style="min-width:44px;display:inline-block">${pct(c.util, 0)}</span></span></td></tr>`).join('')
+      : `<tr><td colspan="9"><div class="empty">No accounts in this selection.</div></td></tr>`) + '</tbody>';
+}
+
+function renderOperations() {
+  const os = D.orders.filter(o => periodOk(o[0]) && custOk(o[1]));
+  const st = [
+    { k: 'Pick & ship', s: 'order → ship', ic: 'i-truck', c: '--pine', fg: '#fff', v: mean(os.map(o => dayDiff(o[0], o[2])).filter(x => x != null)) },
+    { k: 'In transit', s: 'ship → delivery', ic: 'i-pin', c: '--sage', fg: '#fff', v: mean(os.map(o => dayDiff(o[2], o[3])).filter(x => x != null)) },
+    { k: 'Invoicing', s: 'delivery → invoice', ic: 'i-doc', c: '--saffron', fg: '#16201B', v: mean(os.map(o => dayDiff(o[3], o[4])).filter(x => x != null)) },
+    { k: 'Collection', s: 'invoice → cash', ic: 'i-coin', c: '--coral', fg: '#fff', v: mean(os.map(o => dayDiff(o[4], o[5])).filter(x => x != null)) },
+  ];
+  const total = sum(st, s => s.v);
+  $('#o-total').innerHTML = `${os.length ? total.toFixed(1) : '–'}<small>days</small>`;
+  $('#o-open').textContent = os.length ? `${os.length} orders tracked · ${os.filter(o => !o[5]).length} still unpaid` : 'No orders in this selection';
+  $('#stages').innerHTML = st.map(s => `<div class="stage"><span class="chip"><svg><use href="#${s.ic}"/></svg></span><div><div class="t">${s.k}</div><div class="s">${s.s}</div></div>
+     <div class="d num">${os.length ? s.v.toFixed(1) : '–'}<small>d</small></div><div class="p">${total ? pct(s.v / total, 0) + ' of the cycle' : ''}</div></div>`).join('');
+  $('#cycle').setAttribute('aria-label', st.map(s => `${s.k} ${s.v.toFixed(1)} days`).join(', '));
+  $('#cycle').innerHTML = total ? st.map(s => `<div style="flex:${s.v};background:var(${s.c});color:${s.fg}" data-tip="${esc(`<b>${s.k}</b><br>${s.v.toFixed(1)} days · ${pct(s.v / total, 0)} of the cycle`)}">${s.v / total > .07 ? pct(s.v / total, 0) : ''}</div>`).join('') : '';
+
+  // campaigns
+  const cs = D.campaigns.filter(c => periodOk(c[2])).map(c => ({ name: c[0], ch: c[1], start: c[2], end: c[3], budget: c[4], imp: c[5], clicks: c[6], spend: c[7] }))
+    .map(c => ({ ...c, ctr: c.clicks / c.imp, cpc: c.spend / c.clicks, used: c.spend / c.budget })).sort((p, q) => p.start.localeCompare(q.start));
+  const CH = { 'Email': '--slate', 'Social': '--pine2', 'Display': '--sage', 'Paid Search': '--coral' };
+  const med = cs.length ? [...cs].sort((p, q) => p.cpc - q.cpc)[Math.floor(cs.length / 2)].cpc : 0;
+  $('#camp').innerHTML = `<thead><tr><th>Campaign</th><th>Channel</th><th class="n">Spend</th><th>Budget used</th><th class="n">CTR</th><th class="n">CPC</th></tr></thead><tbody>` +
+    (cs.length ? cs.map(c => { const over = c.used > 1, hot = cs.length > 2 && c.cpc > med * 3;
+      return `<tr><td class="strong">${esc(c.name)}<div style="font-size:12px;color:var(--muted);font-weight:400">${c.start} → ${c.end.slice(5)}</div></td>
+        <td><span class="tag" style="background:color-mix(in srgb, var(${CH[c.ch] || '--sage'}) 16%, transparent);color:var(--ink)">${esc(c.ch)}</span></td>
+        <td class="n num strong">${money(c.spend)}</td>
+        <td><span class="mini"><span class="bar" style="width:110px"><i style="width:${Math.min(c.used, 1) * 100}%;background:var(${over ? '--coral' : '--saffron'})"></i></span><span class="num ${over ? 'bad-t' : ''}" style="font-weight:600">${pct(c.used, 0)}</span></span></td>
+        <td class="n num">${pct(c.ctr)}</td><td class="n num ${hot ? 'bad-t' : ''}" style="${hot ? 'font-weight:700' : ''}">$${c.cpc.toFixed(2)}</td></tr>`; }).join('')
+      : `<tr><td colspan="6"><div class="empty">No campaigns started in ${state.period}.</div></td></tr>`) + '</tbody>';
+  const worst = cs.length > 2 ? cs.reduce((p, q) => q.cpc > p.cpc ? q : p) : null;
+  $('#camp-call').innerHTML = worst && worst.cpc > med * 3 ? `<div class="callout">${esc(worst.name)} clicks cost $${worst.cpc.toFixed(2)}, about ${(worst.cpc / med).toFixed(0)}× the median campaign. Review the ${esc(worst.ch)} spend before the next run.</div>` : '';
+
+  // inventory
+  const inv = Object.entries(D.inventory).filter(([m]) => periodOk(m)).map(([m, v]) => ({ m, v }));
+  if (inv.length) invChart($('#ch-inv'), inv);
+  else $('#ch-inv').innerHTML = `<div class="empty">Inventory snapshots cover ${Object.keys(D.inventory)[0].slice(0, 4)} only. Choose “All” or that year to see them.</div>`;
+
+  // terms
+  const tm = {}; for (const o of os) { if (!o[5] || !o[4]) continue; const t = CUST[o[1]][4]; (tm[t] = tm[t] || []).push(dayDiff(o[4], o[5])); }
+  const tdays = t => t === 'Prepaid' ? 0 : +t.replace(/\D/g, '');
+  const trows = Object.entries(tm).map(([t, a]) => ({ t, promised: tdays(t), actual: mean(a), n: a.length })).sort((p, q) => p.promised - q.promised);
+  const mx = Math.max(1, ...trows.map(r => Math.max(r.promised, r.actual)));
+  $('#terms').innerHTML = trows.length ? trows.map(r => { const diff = r.actual - r.promised, late = diff > 0;
+    return `<div class="hb" style="grid-template-columns:76px minmax(0,1fr) 64px;align-items:center;gap:12px" data-tip="${esc(`<b>${r.t}</b><br>Promised ${r.promised} days · actual ${r.actual.toFixed(1)} days<br>${r.n} paid orders`)}">
+      <span class="hb-name">${r.t}</span>
+      <div style="display:grid;gap:4px"><div class="hb-track" style="height:8px;background:transparent"><div class="hb-fill" style="width:${Math.max(r.promised / mx * 100, 1)}%;background:var(--sageL)"></div></div>
+      <div class="hb-track" style="height:8px;background:transparent"><div class="hb-fill" style="width:${r.actual / mx * 100}%;background:var(${late ? '--coral' : '--pine2'})"></div></div></div>
+      <span class="num ${late ? 'bad-t' : 'good-t'}" style="font-weight:700;text-align:right">${diff >= 0 ? '+' : '−'}${Math.abs(diff).toFixed(0)} d</span></div>`; }).join('')
+    : '<div class="empty">No paid orders in this selection.</div>';
+}
+
+/* ---------------- shell ---------------- */
+const VIEWS = { overview: ['Overview', 'Revenue Pulse', renderOverview], accounts: ['Accounts', 'Customers & Markets', renderAccounts], operations: ['Operations', 'Order to Cash & Campaigns', renderOperations] };
+function render() {
+  const [k, t, fn] = VIEWS[state.view];
+  $('#kicker').textContent = 'Sales Intelligence · ' + k; $('#title').textContent = t;
+  for (const v in VIEWS) $('#v-' + v).hidden = v !== state.view;
+  document.querySelectorAll('.nav button').forEach(b => b.dataset.view === state.view ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current'));
+  document.querySelectorAll('#period button').forEach(b => b.setAttribute('aria-pressed', b.dataset.p === state.period));
+  document.querySelectorAll('#grain button').forEach(b => b.setAttribute('aria-pressed', b.dataset.g === state.grain));
+  fn(); save();
+}
+$('#region').innerHTML = `<option value="all">All regions</option>` + regions.map(r => `<option>${esc(r)}</option>`).join('');
+$('#segment').innerHTML = `<option value="all">All segments</option>` + segments.map(r => `<option>${esc(r)}</option>`).join('');
+if (state.region !== 'all' && !regions.includes(state.region)) state.region = 'all';
+if (state.segment !== 'all' && !segments.includes(state.segment)) state.segment = 'all';
+$('#region').value = state.region; $('#segment').value = state.segment;
+$('#region').addEventListener('change', e => { state.region = e.target.value; render(); });
+$('#segment').addEventListener('change', e => { state.segment = e.target.value; render(); });
+$('#period').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { state.period = b.dataset.p; render(); } });
+$('#grain').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { state.grain = b.dataset.g; render(); } });
+document.querySelector('.nav').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { state.view = b.dataset.view; history.replaceState(null, '', '#' + state.view); render(); scrollTo({ top: 0 }); } });
+$('#book').addEventListener('click', e => { const b = e.target.closest('[data-sort]'); if (!b) return; const k = b.dataset.sort;
+  state.sort = { key: k, dir: state.sort.key === k ? -state.sort.dir : (['name', 'seg', 'reg', 'mgr', 'terms'].includes(k) ? 1 : -1) }; renderAccounts(); });
+addEventListener('hashchange', () => { const h = location.hash.slice(1); if (VIEWS[h]) { state.view = h; render(); } });
+
+// contour texture on the hero card
+(() => { let s = ''; for (let i = 0; i < 10; i++) { const pts = []; const base = -30 + i * 38;
+  for (let k = 0; k < 9; k++) pts.push([-20 + k * 80, base + 20 * Math.sin(k * .9 + i * .55 + 1) + 9 * Math.cos(k * 1.7 - i)]);
+  s += `<path d="${smooth(pts)}" fill="none" stroke="#fff" stroke-opacity=".07" stroke-width="1.4" vector-effect="non-scaling-stroke"/>`; }
+  $('#contour').innerHTML = s; })();
+
+let rt; new ResizeObserver(() => { clearTimeout(rt); rt = setTimeout(() => VIEWS[state.view][2](), 120); }).observe(document.querySelector('.main'));
+render();
+</script>
+
+</body>
+</html>

@@ -222,3 +222,8 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+# Dashboard: only the published HTML dashboard is tracked
+dashboard/*
+!dashboard/html/
+dashboard/html/*
+!dashboard/html/index.html
