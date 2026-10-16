@@ -84,9 +84,10 @@ calculated in the browser.
 Each page leads with a summary, then gives the detail. One colour convention
 runs through every chart:
 
-- **Saffron** is the actual value.
-- **Pale green track** is the plan or target.
-- **Coral** marks something that needs attention.
+- **Blue** is the actual value.
+- **Grey track** is the plan or target.
+- **Red** marks something that needs attention.
+- **Teal** and **purple** tell categories apart, such as the leading region or a customer segment.
 
 ### What the data shows
 

@@ -10,35 +10,42 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,650;12..96,750&family=Figtree:wght@400;500;600;700&display=swap">
 <style>
-/* Layout: pine navigation rail on the left, a 12-column card grid on paper. Saffron = actual, track = plan, coral = needs attention. */
+/* Layout: teal navigation rail on the left, a 12-column card grid on a cool grey canvas.
+   Blue = actual, grey track = plan, red = needs attention; teal and purple carry identity. */
 :root{
-  --paper:#F0F2EC; --card:#FFFFFF; --tint:#E7EFE9; --track:#D6E4DA; --line:#E2E6DE;
-  --ink:#16201B; --ink2:#47524C; --muted:#737E78;
-  --pine:#1F4A3D; --pine2:#2E6A56; --sage:#7FA894; --sageL:#A9C7B8; --chip:#1F4A3D;
-  --slate:#5B7C99; --saffron:#EFB233; --saffronL:#FBEBC4; --coral:#E36F55; --coralL:#F9DDD5; --coral-ink:#B5442D; --good-ink:#2A6550;
-  --rail:#1F4A3D; --hero1:#2E6A56; --hero2:#1F4A3D; --on-hero:#FFFFFF; --tip-bg:#16201B; --tip-fg:#FFFFFF;
-  --shadow:0 14px 34px -22px rgba(23,58,47,.45), 0 2px 6px -4px rgba(23,58,47,.12);
+  --paper:#EEF1F5; --card:#FFFFFF; --tint:#F2F4F8; --track:#D8DEE9; --line:#E6E9EF;
+  --ink:#161B26; --ink2:#4A5163; --muted:#737B8E;
+  --pine:#11957E; --pine2:#5547A8; --sage:#5547A8; --sageL:#B9AEEA; --slate:#4BA3DB;
+  --saffron:#3A8FD6; --saffronL:#DCEAF7; --coral:#D9534F; --coralL:#FBE3E2; --coral-ink:#B23A36; --good-ink:#0E8068;
+  --chip-bg:#F0F2F7; --chip-fg:#1F2A44; --navy:#12357A; --on-navy:#FFFFFF;
+  --rail:#11957E; --hero1:#1E4E96; --hero2:#12357A; --layer1:#11957E; --layer2:#C9BFF3; --ring:#7FE0C6; --on-hero:#FFFFFF;
+  --tip-bg:#161B26; --tip-fg:#FFFFFF;
+  --shadow:0 12px 30px -20px rgba(22,35,70,.35), 0 2px 6px -4px rgba(22,35,70,.10);
   --f-display:'Bricolage Grotesque','Segoe UI Variable Display','Segoe UI',system-ui,sans-serif;
   --f-body:'Figtree','Segoe UI',system-ui,-apple-system,sans-serif;
   --r-card:22px; --gap:20px;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --paper:#0D1613; --card:#14201C; --tint:#1A2A24; --track:#2A3F35; --line:#22332C;
-    --ink:#E6EDE8; --ink2:#B3C0B8; --muted:#87958D;
-    --pine:#4FA383; --pine2:#6CC09E; --sage:#6E9584; --sageL:#45675A; --chip:#2E6A56;
-    --slate:#8BA6C0; --saffron:#F0B93F; --saffronL:#3B3016; --coral:#EC7B62; --coralL:#3A211B; --coral-ink:#F39A85; --good-ink:#7DCBA9;
-    --rail:#11241E; --hero1:#24584A; --hero2:#143329; --on-hero:#FFFFFF; --tip-bg:#E6EDE8; --tip-fg:#0D1613;
+    --paper:#0F131B; --card:#171C27; --tint:#1E2533; --track:#283041; --line:#252C3A;
+    --ink:#E8ECF3; --ink2:#B4BCCB; --muted:#8790A2;
+    --pine:#1FA98C; --pine2:#A99CF0; --sage:#A99CF0; --sageL:#4C4580; --slate:#6CC0F2;
+    --saffron:#2F86D4; --saffronL:#1C3350; --coral:#E8615C; --coralL:#3A1E20; --coral-ink:#F59A96; --good-ink:#3FCBA8;
+    --chip-bg:#232B3A; --chip-fg:#E8ECF3; --navy:#3D63B8; --on-navy:#FFFFFF;
+    --rail:#0C6E5D; --hero1:#1D3F86; --hero2:#10265A; --layer1:#1FA98C; --layer2:#3C3670; --ring:#7FE0C6; --on-hero:#FFFFFF;
+    --tip-bg:#E8ECF3; --tip-fg:#0F131B;
     --shadow:0 14px 34px -22px rgba(0,0,0,.8);
     color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --paper:#0D1613; --card:#14201C; --tint:#1A2A24; --track:#2A3F35; --line:#22332C;
-  --ink:#E6EDE8; --ink2:#B3C0B8; --muted:#87958D;
-  --pine:#4FA383; --pine2:#6CC09E; --sage:#6E9584; --sageL:#45675A; --chip:#2E6A56;
-  --slate:#8BA6C0; --saffron:#F0B93F; --saffronL:#3B3016; --coral:#EC7B62; --coralL:#3A211B; --coral-ink:#F39A85; --good-ink:#7DCBA9;
-  --rail:#11241E; --hero1:#24584A; --hero2:#143329; --on-hero:#FFFFFF; --tip-bg:#E6EDE8; --tip-fg:#0D1613;
+  --paper:#0F131B; --card:#171C27; --tint:#1E2533; --track:#283041; --line:#252C3A;
+  --ink:#E8ECF3; --ink2:#B4BCCB; --muted:#8790A2;
+  --pine:#1FA98C; --pine2:#A99CF0; --sage:#A99CF0; --sageL:#4C4580; --slate:#6CC0F2;
+  --saffron:#2F86D4; --saffronL:#1C3350; --coral:#E8615C; --coralL:#3A1E20; --coral-ink:#F59A96; --good-ink:#3FCBA8;
+  --chip-bg:#232B3A; --chip-fg:#E8ECF3; --navy:#3D63B8; --on-navy:#FFFFFF;
+  --rail:#0C6E5D; --hero1:#1D3F86; --hero2:#10265A; --layer1:#1FA98C; --layer2:#3C3670; --ring:#7FE0C6; --on-hero:#FFFFFF;
+  --tip-bg:#E8ECF3; --tip-fg:#0F131B;
   --shadow:0 14px 34px -22px rgba(0,0,0,.8);
   color-scheme:dark;
 }
@@ -63,7 +70,7 @@ button,select{font:inherit;color:inherit}
 .nav button:hover{color:#fff;background:rgba(255,255,255,.08)}
 .nav button[aria-current="page"]{background:var(--card);color:var(--ink);box-shadow:0 10px 22px -10px rgba(0,0,0,.45)}
 .nav button[aria-current="page"] svg{color:var(--pine)}
-.nav button:focus-visible{outline:2px solid var(--saffron)}
+.nav button:focus-visible{outline:2px solid #fff}
 .main{min-width:0;padding-block:26px 40px;padding-inline:clamp(16px,2.6vw,40px) clamp(16px,2.2vw,36px)}
 
 /* ---------- header ---------- */
@@ -72,13 +79,13 @@ button,select{font:inherit;color:inherit}
 h1{font-family:var(--f-display);font-weight:750;font-size:clamp(28px,3.2vw,42px);line-height:1.05;letter-spacing:-.02em;margin:6px 0 0;text-wrap:balance}
 .filters{display:flex;flex-wrap:wrap;gap:12px}
 .fbox{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:7px 10px 7px 8px;display:flex;align-items:center;gap:10px;min-height:56px}
-.fbox .ic{width:32px;height:32px;border-radius:50%;background:var(--tint);display:grid;place-items:center;color:var(--pine);flex:none}
+.fbox .ic{width:32px;height:32px;border-radius:10px;background:var(--tint);display:grid;place-items:center;color:var(--pine);flex:none}
 .fbox .ic svg{width:17px;height:17px}
 .fbox label,.fbox .lbl{display:block;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 .fbox select{border:0;background:transparent;font-weight:600;font-size:14px;padding:0 4px 0 0;cursor:pointer;min-width:120px}
 .seg{display:flex;gap:2px;background:var(--tint);border-radius:12px;padding:3px;margin-top:2px}
 .seg button{all:unset;cursor:pointer;font-size:13px;font-weight:600;padding:3px 10px;border-radius:9px;color:var(--muted)}
-.seg button[aria-pressed="true"]{background:var(--card);color:var(--ink);box-shadow:0 2px 6px -2px rgba(0,0,0,.18)}
+.seg button[aria-pressed="true"]{background:var(--navy);color:var(--on-navy);box-shadow:0 2px 6px -2px rgba(0,0,0,.25)}
 .seg button:focus-visible{outline:2px solid var(--saffron)}
 
 /* ---------- grid + cards ---------- */
@@ -86,7 +93,7 @@ h1{font-family:var(--f-display);font-weight:750;font-size:clamp(28px,3.2vw,42px)
 .c{grid-column:span var(--c,12);min-width:0}
 .card{background:var(--card);border-radius:var(--r-card);box-shadow:var(--shadow);padding:22px 24px 22px;display:flex;flex-direction:column;min-width:0}
 .ch{display:flex;align-items:center;gap:12px;margin-bottom:16px;min-height:40px}
-.chip{width:40px;height:40px;border-radius:50%;background:var(--chip);color:#fff;display:grid;place-items:center;flex:none}
+.chip{width:40px;height:40px;border-radius:12px;background:var(--chip-bg);color:var(--chip-fg);display:grid;place-items:center;flex:none}
 .chip svg{width:19px;height:19px}
 .ch h2{font-family:var(--f-display);font-weight:650;font-size:20px;letter-spacing:-.01em;margin:0;line-height:1.15}
 .ch .sub{font-size:12.5px;color:var(--muted);margin-top:1px}
@@ -101,8 +108,8 @@ h1{font-family:var(--f-display);font-weight:750;font-size:clamp(28px,3.2vw,42px)
 /* hero */
 .hero{position:relative;padding-bottom:26px;display:flex;flex-direction:column}
 .hero .stack{position:absolute;inset:0 0 26px 0;border-radius:var(--r-card)}
-.hero .s2{background:var(--coralL);transform:translateY(24px) scaleX(.9)}
-.hero .s1{background:var(--saffron);transform:translateY(12px) scaleX(.95)}
+.hero .s2{background:var(--layer2);transform:translateY(24px) scaleX(.9)}
+.hero .s1{background:var(--layer1);transform:translateY(12px) scaleX(.95)}
 .hero .face{position:relative;border-radius:var(--r-card);background:linear-gradient(135deg,var(--hero1),var(--hero2));color:var(--on-hero);padding:26px 30px 24px;overflow:hidden;flex:1;box-shadow:0 22px 40px -24px rgba(10,35,27,.7)}
 .hero .contour{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .hero .row{position:relative;display:flex;justify-content:space-between;gap:16px;align-items:flex-start}
@@ -113,21 +120,21 @@ h1{font-family:var(--f-display);font-weight:750;font-size:clamp(28px,3.2vw,42px)
 .hero .split{position:relative;display:flex;gap:40px;margin-top:22px;padding-top:16px;border-top:1px dashed rgba(255,255,255,.2)}
 .hero .split .lbl{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;opacity:.6}
 .hero .split .v{font-family:var(--f-display);font-weight:650;font-size:24px;margin-top:4px}
-.hero .v.neg{color:#F6B3A3}
+.hero .v.neg{color:#FFC2BF}
 
 /* kpi tiles */
 .kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
-.tile{background:var(--tint);border-radius:var(--r-card);padding:24px 12px 20px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;min-width:0}
+.tile{background:var(--card);box-shadow:var(--shadow);border-radius:var(--r-card);padding:24px 12px 20px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;min-width:0}
 .tile .chip{width:52px;height:52px}
 .tile .chip svg{width:22px;height:22px}
 .tile .v{font-family:var(--f-display);font-weight:750;font-size:clamp(24px,2.3vw,34px);letter-spacing:-.02em;margin-top:auto;line-height:1.1}
 .tile .l{font-weight:600;color:var(--ink2);font-size:14px;margin-top:auto}
 .pill{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;font-weight:700;padding:4px 10px;border-radius:99px;white-space:nowrap}
 .pill.good{background:var(--tint);color:var(--good-ink)}
-.tile .pill.good{background:var(--card)}
+.tile .pill.good{background:var(--tint)}
 .pill.bad{background:var(--coralL);color:var(--coral-ink)}
 .pill.flat{background:var(--paper);color:var(--muted)}
-.htile{background:var(--tint);border-radius:var(--r-card);padding:20px 22px;display:flex;align-items:center;gap:16px;min-width:0}
+.htile{background:var(--card);box-shadow:var(--shadow);border-radius:var(--r-card);padding:20px 22px;display:flex;align-items:center;gap:16px;min-width:0}
 .htile .chip{width:52px;height:52px}
 .htile .v{font-family:var(--f-display);font-weight:750;font-size:32px;letter-spacing:-.02em;line-height:1.05}
 .htile .l{color:var(--ink2);font-weight:500;font-size:14px}
@@ -190,7 +197,7 @@ tr:last-child td{border-bottom:0}
 .o2c .huge small{font-size:22px;color:var(--muted);font-weight:500;letter-spacing:0;margin-left:6px}
 .stages{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;position:relative}
 .stage{display:grid;grid-template-columns:48px minmax(0,1fr);gap:4px 12px;align-items:center}
-.stage .chip{width:48px;height:48px;background:var(--tint);color:var(--pine);border:5px solid var(--card)}
+.stage .chip{width:48px;height:48px;border-radius:50%;background:var(--chip-bg);color:var(--pine);border:5px solid var(--card)}
 .stage .t{font-weight:700;font-size:15.5px}
 .stage .s{font-size:12.5px;color:var(--muted)}
 .stage .d{grid-column:2;font-family:var(--f-display);font-weight:750;font-size:36px;letter-spacing:-.02em;line-height:1;margin-top:10px}
@@ -284,7 +291,7 @@ tr:last-child td{border-bottom:0}
 <div class="app">
   <nav class="rail" aria-label="Dashboard pages">
     <div class="logo" aria-hidden="true">
-      <svg viewBox="0 0 48 48"><rect x="10" y="10" width="28" height="28" rx="8" transform="rotate(45 24 24)" style="fill:var(--saffron)"/><path d="M17 31v-5M24 31V16M31 31v-9" style="stroke:#1F4A3D" stroke-width="3.4" stroke-linecap="round"/></svg>
+      <svg viewBox="0 0 48 48"><rect x="10" y="10" width="28" height="28" rx="8" transform="rotate(45 24 24)" style="fill:#FFFFFF"/><path d="M17 31v-5M24 31V16M31 31v-9" style="stroke:var(--rail)" stroke-width="3.4" stroke-linecap="round"/></svg>
     </div>
     <div class="nav">
       <button type="button" data-view="overview"><svg><use href="#i-grid"/></svg><span>Overview</span></button>
@@ -359,7 +366,7 @@ tr:last-child td{border-bottom:0}
         <div class="spark-foot"><div class="bigv num" id="cogs-v">–</div><span id="cogs-d"></span></div>
       </div>
       <div class="c card" style="--c:6;--cm:12">
-        <div class="ch"><span class="chip"><svg><use href="#i-bars"/></svg></span><div><h2>Revenue vs target</h2><div class="sub" id="bars-sub">Monthly, saffron is actual, the track behind it is the plan</div></div>
+        <div class="ch"><span class="chip"><svg><use href="#i-bars"/></svg></span><div><h2>Revenue vs target</h2><div class="sub" id="bars-sub">Monthly. Blue is actual, the grey track behind it is the plan</div></div>
           <div class="end legend" id="bars-legend"><span><i style="background:var(--saffron)"></i>Actual</span><span><i style="background:var(--track)"></i>Target</span></div></div>
         <div class="chart" id="ch-bars"></div>
       </div>
@@ -373,7 +380,7 @@ tr:last-child td{border-bottom:0}
         <div class="rows" id="top"></div>
       </div>
       <div class="c card" style="--c:4;--cm:6">
-        <div class="ch"><span class="chip" style="background:var(--saffron);color:#16201B"><svg><use href="#i-spark"/></svg></span><h2>Analyst note</h2></div>
+        <div class="ch"><span class="chip" style="background:var(--navy);color:var(--on-navy)"><svg><use href="#i-spark"/></svg></span><h2>Analyst note</h2></div>
         <div class="note">
           <div><p id="note"></p><div class="cta" id="note-cta"></div></div>
           <svg class="art" viewBox="0 0 180 170" aria-hidden="true">
@@ -664,7 +671,7 @@ function renderOverview() {
   const R = 52, C = 2 * Math.PI * R;
   $('#h-ring').setAttribute('aria-label', filtered ? `${pct(ringV)} of company revenue` : `${pct(ringV)} of target`);
   $('#h-ring').innerHTML = `<circle cx="66" cy="66" r="${R}" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="13"/>
-    <circle cx="66" cy="66" r="${R}" fill="none" style="stroke:var(--saffron)" stroke-width="13" stroke-linecap="round" stroke-dasharray="${Math.min(ringV, 1) * C} ${C}" transform="rotate(-90 66 66)"/>
+    <circle cx="66" cy="66" r="${R}" fill="none" style="stroke:var(--ring)" stroke-width="13" stroke-linecap="round" stroke-dasharray="${Math.min(ringV, 1) * C} ${C}" transform="rotate(-90 66 66)"/>
     <text x="66" y="68" text-anchor="middle" font-family="Bricolage Grotesque, Segoe UI, sans-serif" font-weight="700" font-size="24" fill="#fff">${pct(ringV)}</text>
     <text x="66" y="88" text-anchor="middle" font-size="11.5" fill="rgba(255,255,255,.7)">${filtered ? 'of company' : 'of target'}</text>`;
   if (filtered) {
@@ -700,7 +707,7 @@ function renderOverview() {
 
   targetBars($('#ch-bars'), mrows, !filtered);
   $('#bars-legend').innerHTML = `<span><i style="background:var(--saffron)"></i>Actual</span>` + (filtered ? '' : `<span><i style="background:var(--track)"></i>Target</span>`);
-  $('#bars-sub').textContent = filtered ? `Targets are set company-wide, so only actuals are shown for ${scopeLabel()}` : 'Monthly. Saffron is actual, the track behind it is the plan';
+  $('#bars-sub').textContent = filtered ? `Targets are set company-wide, so only actuals are shown for ${scopeLabel()}` : 'Monthly. Blue is actual, the grey track behind it is the plan';
 
   const cats = {}; for (const l of lines) cats[l[3]] = (cats[l[3]] || 0) + l[6];
   const catRows = Object.entries(cats).sort((p, q) => q[1] - p[1]);
@@ -747,7 +754,7 @@ function renderAccounts() {
   const rl = scoped({ ignoreRegion: true }), rt = sum(rl, l => l[6]), reg = {};
   for (const l of rl) { const r = CUST[l[2]][2]; reg[r] = reg[r] || { rev: 0, ids: new Set() }; reg[r].rev += l[6]; reg[r].ids.add(l[2]); }
   const rrows = Object.entries(reg).sort((p, q) => q[1].rev - p[1].rev);
-  $('#regions').innerHTML = rrows.length ? barList(rrows.map(([n, r], i) => ({ name: n, v: r.rev, label: money(r.rev), small: pct(r.rev / rt, 0), color: (state.region === 'all' ? i === 0 : n === state.region) ? '--pine' : '--sage', sel: n === state.region,
+  $('#regions').innerHTML = rrows.length ? barList(rrows.map(([n, r], i) => ({ name: n, v: r.rev, label: money(r.rev), small: pct(r.rev / rt, 0), color: (state.region === 'all' ? i === 0 : n === state.region) ? '--pine' : '--sageL', sel: n === state.region,
     tip: `<b>${esc(n)}</b><br>${money(r.rev)} · ${pct(r.rev / rt)} of revenue<br>${r.ids.size} active accounts` })), { rank: true }) : '<div class="empty">No sales in this selection.</div>';
   $('#regions-foot').textContent = rrows.length ? `${rrows[0][0]} leads with ${pct(rrows[0][1].rev / rt, 0)} of revenue across ${rrows[0][1].ids.size} accounts.` : '';
 
@@ -755,7 +762,7 @@ function renderAccounts() {
 
   const sl = scoped({ ignoreSegment: true }), stt = sum(sl, l => l[6]), seg = {};
   for (const l of sl) { const k = CUST[l[2]][1]; seg[k] = seg[k] || { lines: [], ids: new Set() }; seg[k].lines.push(l); seg[k].ids.add(l[2]); }
-  const SEGC = { 'Mid-Market': ['--pine', '#fff'], 'Enterprise': ['--saffron', '#16201B'], 'SMB': ['--sage', '#fff'] };
+  const SEGC = { 'Mid-Market': ['--pine', '#fff'], 'SMB': ['--sage', '#fff'], 'Enterprise': ['--saffron', '#fff'] };
   const srows = Object.entries(seg).map(([k, v]) => ({ k, ...agg(v.lines), n: v.ids.size })).sort((p, q) => q.rev - p.rev);
   $('#segbar').innerHTML = srows.map(r => `<div style="flex:${r.rev};background:var(${SEGC[r.k][0]});color:${SEGC[r.k][1]};${state.segment !== 'all' && state.segment !== r.k ? 'opacity:.35' : ''}" data-tip="${esc(`<b>${r.k}</b><br>${money(r.rev)} · ${pct(r.rev / stt)}`)}">${pct(r.rev / stt, 0)}</div>`).join('');
   $('#segtable').innerHTML = `<thead><tr><th>Segment</th><th class="n">Revenue</th><th class="n">Share</th><th class="n">GM %</th><th class="n">Accounts</th></tr></thead><tbody>` +
@@ -763,7 +770,7 @@ function renderAccounts() {
 
   const mg = {}; for (const c of custs) { mg[c.mgr] = mg[c.mgr] || { rev: 0, n: 0, gp: 0 }; mg[c.mgr].rev += c.rev; mg[c.mgr].gp += c.rev - c.cogs; mg[c.mgr].n++; }
   const mrows = Object.entries(mg).sort((p, q) => q[1].rev - p[1].rev);
-  $('#mgrs').innerHTML = mrows.length ? barList(mrows.map(([n, m], i) => ({ name: n, v: m.rev, label: money(m.rev), small: `${m.n} accts · GM ${pct(m.gp / m.rev, 0)}`, color: i === 0 ? '--pine' : '--sage',
+  $('#mgrs').innerHTML = mrows.length ? barList(mrows.map(([n, m], i) => ({ name: n, v: m.rev, label: money(m.rev), small: `${m.n} accts · GM ${pct(m.gp / m.rev, 0)}`, color: i === 0 ? '--pine' : '--sageL',
     tip: `<b>${esc(n)}</b><br>${money(m.rev)} from ${m.n} accounts<br>Gross margin ${pct(m.gp / m.rev)}` }))) : '<div class="empty">No accounts in this selection.</div>';
 
   // account book
@@ -785,7 +792,7 @@ function renderOperations() {
   const st = [
     { k: 'Pick & ship', s: 'order → ship', ic: 'i-truck', c: '--pine', fg: '#fff', v: mean(os.map(o => dayDiff(o[0], o[2])).filter(x => x != null)) },
     { k: 'In transit', s: 'ship → delivery', ic: 'i-pin', c: '--sage', fg: '#fff', v: mean(os.map(o => dayDiff(o[2], o[3])).filter(x => x != null)) },
-    { k: 'Invoicing', s: 'delivery → invoice', ic: 'i-doc', c: '--saffron', fg: '#16201B', v: mean(os.map(o => dayDiff(o[3], o[4])).filter(x => x != null)) },
+    { k: 'Invoicing', s: 'delivery → invoice', ic: 'i-doc', c: '--saffron', fg: '#fff', v: mean(os.map(o => dayDiff(o[3], o[4])).filter(x => x != null)) },
     { k: 'Collection', s: 'invoice → cash', ic: 'i-coin', c: '--coral', fg: '#fff', v: mean(os.map(o => dayDiff(o[4], o[5])).filter(x => x != null)) },
   ];
   const total = sum(st, s => s.v);
@@ -799,7 +806,7 @@ function renderOperations() {
   // campaigns
   const cs = D.campaigns.filter(c => periodOk(c[2])).map(c => ({ name: c[0], ch: c[1], start: c[2], end: c[3], budget: c[4], imp: c[5], clicks: c[6], spend: c[7] }))
     .map(c => ({ ...c, ctr: c.clicks / c.imp, cpc: c.spend / c.clicks, used: c.spend / c.budget })).sort((p, q) => p.start.localeCompare(q.start));
-  const CH = { 'Email': '--slate', 'Social': '--pine2', 'Display': '--sage', 'Paid Search': '--coral' };
+  const CH = { 'Email': '--slate', 'Social': '--pine', 'Display': '--sage', 'Paid Search': '--coral' };
   const med = cs.length ? [...cs].sort((p, q) => p.cpc - q.cpc)[Math.floor(cs.length / 2)].cpc : 0;
   $('#camp').innerHTML = `<thead><tr><th>Campaign</th><th>Channel</th><th class="n">Spend</th><th>Budget used</th><th class="n">CTR</th><th class="n">CPC</th></tr></thead><tbody>` +
     (cs.length ? cs.map(c => { const over = c.used > 1, hot = cs.length > 2 && c.cpc > med * 3;
@@ -826,7 +833,7 @@ function renderOperations() {
     return `<div class="hb" style="grid-template-columns:76px minmax(0,1fr) 64px;align-items:center;gap:12px" data-tip="${esc(`<b>${r.t}</b><br>Promised ${r.promised} days · actual ${r.actual.toFixed(1)} days<br>${r.n} paid orders`)}">
       <span class="hb-name">${r.t}</span>
       <div style="display:grid;gap:4px"><div class="hb-track" style="height:8px;background:transparent"><div class="hb-fill" style="width:${Math.max(r.promised / mx * 100, 1)}%;background:var(--sageL)"></div></div>
-      <div class="hb-track" style="height:8px;background:transparent"><div class="hb-fill" style="width:${r.actual / mx * 100}%;background:var(${late ? '--coral' : '--pine2'})"></div></div></div>
+      <div class="hb-track" style="height:8px;background:transparent"><div class="hb-fill" style="width:${r.actual / mx * 100}%;background:var(${late ? '--coral' : '--pine'})"></div></div></div>
       <span class="num ${late ? 'bad-t' : 'good-t'}" style="font-weight:700;text-align:right">${diff >= 0 ? '+' : '−'}${Math.abs(diff).toFixed(0)} d</span></div>`; }).join('')
     : '<div class="empty">No paid orders in this selection.</div>';
 }
